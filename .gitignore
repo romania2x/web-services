@@ -1,0 +1,13 @@
+/.idea/
+/var/mongo/*
+!/var/mongo/.gitkeep
+/var/neo4j/*
+!/var/neo4j/.gitkeep
+/var/postgis/*
+!/var/postgis/.gitkeep
+/var/elasticsearch/*
+!/var/elasticsearch/.gitkeep
+/var/rabbitmq/*
+!/var/rabbitmq/.gitkeep
+/var/mapproxy/*
+!/var/mapproxy/.gitkeep

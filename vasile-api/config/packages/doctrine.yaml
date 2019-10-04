@@ -1,0 +1,26 @@
+doctrine:
+  dbal:
+    # configure these for your database server
+    driver: 'pgsql'
+    charset: utf8
+    url: '%env(resolve:DATABASE_URL)%'
+    types:
+      geometry:   CrEOF\Spatial\DBAL\Types\GeometryType
+      point:      CrEOF\Spatial\DBAL\Types\Geometry\PointType
+      polygon:    CrEOF\Spatial\DBAL\Types\Geometry\PolygonType
+      linestring: CrEOF\Spatial\DBAL\Types\Geometry\LineStringType
+  orm:
+    auto_generate_proxy_classes: true
+    naming_strategy: doctrine.orm.naming_strategy.underscore
+    auto_mapping: true
+    mappings:
+      App:
+        is_bundle: false
+        type: annotation
+        dir: '%kernel.project_dir%/src/Entity'
+        prefix: 'App\Entity'
+        alias: App
+    dql:
+      string_functions:
+        ST_AsGeoJSON: Jsor\Doctrine\PostGIS\Functions\ST_AsGeoJSON
+        ST_Transform: Jsor\Doctrine\PostGIS\Functions\ST_Transform

@@ -1,0 +1,146 @@
+version: '3'
+networks:
+  romtelecom:
+services:
+  public-http-gateway:
+    image: kong:latest
+    depends_on:
+      - public-gui
+      - public-api-nginx
+      - internal-kibana
+      - internal-mongo-express
+      - internal-mapproxy
+    volumes:
+      - ./infrastructure:/configs
+    environment:
+      - KONG_DATABASE=off
+      - KONG_DECLARATIVE_CONFIG=/configs/kong.yml
+      - KONG_PROXY_ACCESS_LOG=/dev/stdout
+      - KONG_ADMIN_ACCESS_LOG=/dev/stdout
+      - KONG_PROXY_ERROR_LOG=/dev/stderr
+      - KONG_ADMIN_ERROR_LOG=/dev/stderr
+      - KONG_ADMIN_LISTEN=0.0.0.0:8001, 0.0.0.0:8444 ssl
+    ports:
+      - 80:8000
+      - 443:8443
+      - 8001:8001
+      - 8444:8444
+    networks:
+      - romtelecom
+  public-gui:
+    build: infrastructure/ng
+    command: ng serve --host 0.0.0.0 --disableHostCheck
+    volumes:
+      - ./vasile-gui:/app
+    networks:
+      - romtelecom
+
+  public-api-php-fpm:
+    build: infrastructure/fpm
+    depends_on:
+      - internal-postgis
+      - internal-mongo
+      - internal-neo4j
+      - internal-rabbitmq
+      - internal-mercure
+      - internal-elasticsearch
+      - internal-cache
+    volumes:
+      - ./vasile-api:/app
+      - ./infrastructure/mapproxy:/configs/mapproxy
+    networks:
+      - romtelecom
+  public-api-nginx:
+    build: infrastructure/nginx
+    depends_on:
+      - public-api-php-fpm
+    volumes:
+      - ./vasile-api:/app
+    networks:
+      - romtelecom
+  internal-mongo:
+    image: mongo
+    networks:
+      - romtelecom
+    volumes:
+      - ./var/mongo:/data/db
+  internal-mongo-express:
+    image: mongo-express
+    depends_on:
+      - internal-mongo
+    environment:
+      - ME_CONFIG_OPTIONS_EDITORTHEME=ambiance
+      - ME_CONFIG_MONGODB_SERVER=internal-mongo
+      - ME_CONFIG_MONGODB_AUTH_DATABASE=db
+      - ME_CONFIG_BASICAUTH_USERNAME=admin
+      - ME_CONFIG_BASICAUTH_PASSWORD=pass
+    networks:
+      - romtelecom
+  internal-neo4j:
+    image: neo4j
+    environment:
+      - NEO4J_AUTH=neo4j/test
+      - NEO4J_DBMS_CONNECTOR__HTTP=80
+    networks:
+      - romtelecom
+    volumes:
+      - ./var/neo4j/db:/data
+      - ./var/neo4j/logs:/logs
+      - ./var/neo4j/plugins:/plugins
+    ports:
+      - 7474:7474
+  internal-rabbitmq:
+    image: rabbitmq:3.7.5-management
+    environment:
+      - RABBITMQ_ERLANG_COOKIE=6085e2412b6fa88647466c6a81c0cea0
+      - RABBITMQ_DEFAULT_USER=rabbitmq
+      - RABBITMQ_DEFAULT_PASS=rabbitmq
+      - RABBITMQ_DEFAULT_VHOST=/
+    networks:
+      - romtelecom
+    volumes:
+      - ./var/rabbitmq:/var/lib/rabbitmq
+  internal-mercure:
+    image: dunglas/mercure
+    environment:
+      - JWT_KEY=!ChangeMe!
+      - DEMO=1
+      - ALLOW_ANONYMOUS=1
+      - PUBLISH_ALLOWED_ORIGINS=*
+      - CORS_ALLOWED_ORIGINS=public.vasile
+    networks:
+      - romtelecom
+  internal-postgis:
+    image: mdillon/postgis
+    environment:
+      - POSTGRES_DB=osm
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      - romtelecom
+    volumes:
+      - ./var/postgis/db:/var/lib/postgresql/data
+  internal-elasticsearch:
+    image: elasticsearch:6.8.2
+    environment:
+      - discovery.type=single-node
+    networks:
+      - romtelecom
+    volumes:
+      - ./var/elasticsearch:/usr/share/elasticsearch/data
+  internal-kibana:
+    image: kibana:6.8.2
+    links:
+      - internal-elasticsearch:elasticsearch
+    networks:
+      - romtelecom
+  internal-mapproxy:
+    build: infrastructure/mapproxy
+    networks:
+      - romtelecom
+    volumes:
+      - ./var/mapproxy:/cache_data
+  internal-cache:
+    image: redis
+    networks:
+      - romtelecom

@@ -1,0 +1,159 @@
+services:
+  demo:
+  tms:
+    use_grid_names: true
+    origin: 'nw'
+layers:
+  - name: osm
+    title: OpenStreetMap
+    sources: [osm_cache_in]
+  - name: otm
+    title: OpenTopoMap
+    sources: [otm_cache_in]
+  #Stamen Maps
+  - name: stamen_toner
+    title: Stamen - Toner
+    sources: [stamen_toner_cache_in]
+  - name: stamen_toner_lite
+    title: Stamen - Toner Lite
+    sources: [stamen_toner_lite_cache_in]
+  - name: stamen_toner_background
+    title: Stamen - Toner Background
+    sources: [stamen_toner_background_cache_in]
+  - name: stamen_terrain
+    title: Stamen - Terrain
+    sources: [stamen_terrain_cache_in]
+  - name: stamen_terrain_background
+    title: Stamen - Terrain Background
+    sources: [stamen_terrain_background_cache_in]
+  #Google Maps
+  - name: google_maps_roadmap
+    title: Google Maps - Roadmap
+    sources: [google_maps_roadmap_cache_in]
+  - name: google_maps_hybrid
+    title: Google Maps - Roadmap Hybrid
+    sources: [google_maps_hybrid_cache_in]
+  - name: google_maps_roadmap_terrain
+    title: Google Maps - Roadmap Terrain
+    sources: [google_maps_roadmap_terrain_cache_in]
+  - name: google_maps_sattelite
+    title: Google Maps - Sattelite Only
+    sources: [google_maps_sattelite_cache_in]
+  - name: google_maps_terrain
+    title: Google Maps - Terrain Only
+    sources: [google_maps_terrain_cache_in]
+
+caches:
+  #OpenStreetMap
+  osm_cache_in:
+    grids: [webmercator]
+    sources: [osm_source]
+  otm_cache_in:
+    grids: [webmercator]
+    sources: [otm_source]
+  #Stamen
+  stamen_toner_cache_in:
+    grids: [webmercator]
+    sources: [stamen_toner_source]
+  stamen_toner_lite_cache_in:
+    grids: [webmercator]
+    sources: [stamen_toner_lite_source]
+  stamen_toner_background_cache_in:
+    grids: [webmercator]
+    sources: [stamen_toner_background_source]
+  stamen_terrain_cache_in:
+    grids: [webmercator]
+    sources: [stamen_terrain_source]
+  stamen_terrain_background_cache_in:
+    grids: [webmercator]
+    sources: [stamen_terrain_background_source]
+  #Google Maps
+  google_maps_roadmap_cache_in:
+    grids: [google_webmercator]
+    sources: [google_maps_roadmap_source]
+  google_maps_roadmap_terrain_cache_in:
+    grids: [google_webmercator]
+    sources: [google_maps_roadmap_terrain_source]
+  google_maps_hybrid_cache_in:
+    grids: [google_webmercator]
+    sources: [google_maps_hybrid_source]
+  google_maps_sattelite_cache_in:
+    grids: [google_webmercator]
+    sources: [google_maps_sattelite_source]
+  google_maps_terrain_cache_in:
+    grids: [google_webmercator]
+    sources: [google_maps_terrain_source]
+
+sources:
+  #OpenStreetMap
+  osm_source:
+    type: tile
+    grid: webmercator
+    url: http://c.tile.openstreetmap.org/%(z)s/%(x)s/%(y)s.png
+  otm_source:
+    type: tile
+    grid: webmercator
+    url: https://a.tile.opentopomap.org/%(z)s/%(x)s/%(y)s.png
+  #Stamen Maps
+  stamen_toner_source:
+    type: tile
+    grid: webmercator
+    url: http://b.tile.stamen.com/toner/%(z)s/%(x)s/%(y)s.png
+  stamen_toner_lite_source:
+    type: tile
+    grid: webmercator
+    url: http://b.tile.stamen.com/toner-lite/%(z)s/%(x)s/%(y)s.png
+  stamen_toner_background_source:
+    type: tile
+    grid: webmercator
+    url: http://b.tile.stamen.com/toner-background/%(z)s/%(x)s/%(y)s.png
+  stamen_terrain_source:
+    type: tile
+    grid: webmercator
+    url: http://b.tile.stamen.com/terrain/%(z)s/%(x)s/%(y)s.png
+  stamen_terrain_background_source:
+    type: tile
+    grid: webmercator
+    url: http://b.tile.stamen.com/terrain-background/%(z)s/%(x)s/%(y)s.png
+  #Google Maps
+  google_maps_roadmap_source:
+    type: tile
+    url: http://mt1.google.com/vt/lyrs=m&hl=en&x=%(x)s&y=%(y)s&z=%(z)s
+    grid: google_webmercator
+  google_maps_hybrid_source:
+    type: tile
+    url: http://mt1.google.com/vt/lyrs=y&hl=en&x=%(x)s&y=%(y)s&z=%(z)s
+    grid: google_webmercator
+  google_maps_roadmap_terrain_source:
+    type: tile
+    url: http://mt1.google.com/vt/lyrs=p&hl=en&x=%(x)s&y=%(y)s&z=%(z)s
+    grid: google_webmercator
+  google_maps_sattelite_source:
+    type: tile
+    url: http://mt1.google.com/vt/lyrs=s&hl=en&x=%(x)s&y=%(y)s&z=%(z)s
+    grid: google_webmercator
+  google_maps_terrain_source:
+    type: tile
+    url: http://mt1.google.com/vt/lyrs=t&hl=en&x=%(x)s&y=%(y)s&z=%(z)s
+    grid: google_webmercator
+
+grids:
+  webmercator:
+    base: GLOBAL_WEBMERCATOR
+    srs: 'EPSG:3857'
+    origin: nw
+  google_webmercator:
+    base: GLOBAL_WEBMERCATOR
+    srs: 'EPSG:3857'
+    origin: ul
+
+globals:
+  # cache options
+  cache:
+    # where to store the cached images
+    base_dir: '/cache_data'
+    # where to store lockfiles for concurrent_requests
+    lock_dir: '/cache_data/locks'
+    # where to store lockfiles for tile creation
+    tile_lock_dir: '/cache_data/tile_locks'
+

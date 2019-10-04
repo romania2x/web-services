@@ -1,0 +1,82 @@
+@import "~bootstrap/scss/bootstrap";
+@import "~primeicons/primeicons.css";
+@import "~primeng/resources/themes/luna-green/theme.css";
+@import "~primeng/resources/primeng.css";
+@import "~golden-layout/src/css/goldenlayout-base.css";
+@import "~golden-layout/src/css/goldenlayout-dark-theme.css";
+@import "~leaflet/dist/leaflet.css";
+@import "~ol/ol.css";
+
+$fa-font-path: "assets/webfonts";
+@import "~@fortawesome/fontawesome-free/scss/fontawesome";
+@import "~@fortawesome/fontawesome-free/scss/solid";
+
+body, html {
+  width: 100vw;
+  height: 100vh;
+  padding: 0;
+  margin: 0;
+}
+
+.ng-golden-layout-root {
+  height: calc(100% - 47px) !important;
+}
+
+.map-container {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.ol-control {
+  padding: 1px;
+
+  button {
+    background-color: rgba(34, 34, 34, 0.8);
+    width: 2em;
+    height: 2em;
+    font-size: 1.35em;
+    padding: 3px;
+  }
+}
+
+
+.ol-zoom {
+  margin-top: 55px;
+  float: right;
+  position: relative;
+  margin-right: 15px;
+
+  .ol-zoom-out {
+    margin-top: 204px;
+  }
+}
+
+.ol-zoomslider {
+  margin-top: 73px;
+  float: right;
+  position: relative;
+  margin-right: -47px;
+  background-color: transparent;
+  top: 2.3em;
+}
+
+.ol-touch .ol-zoom .ol-zoom-out {
+  margin-top: 212px;
+}
+
+.ol-touch .ol-zoomslider {
+  top: 2.75em;
+}
+
+.ol-zoom-in.ol-has-tooltip:hover [role=tooltip],
+.ol-zoom-in.ol-has-tooltip:focus [role=tooltip] {
+  top: 3px;
+}
+
+.ol-zoom-out.ol-has-tooltip:hover [role=tooltip],
+.ol-zoom-out.ol-has-tooltip:focus [role=tooltip] {
+  top: 232px;
+}

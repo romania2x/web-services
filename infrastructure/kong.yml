@@ -1,0 +1,53 @@
+_format_version: "1.1"
+
+services:
+  #public services
+  - name: public-api
+    url: http://public-api-nginx
+    routes:
+      - name: public-api
+        hosts:
+          - public.vasile
+        paths:
+          - /api
+  - name: public-mapproxy
+    url: http://internal-mapproxy
+    routes:
+      - name: public-mapproxy
+        hosts:
+          - public.vasile
+        paths:
+          - /mapproxy
+  - name: public-gui
+    url: http://public-gui:4200
+    routes:
+      - name: public-gui
+        hosts:
+          - public.vasile
+        paths:
+          - /
+  #debug services
+  - name: debug-mongo
+    url: http://internal-mongo-express:8081
+    routes:
+      - name: debug-mongo-express
+        hosts:
+          - mongo.vasile
+        paths:
+          - /
+  - name: debug-kibana
+    url: http://internal-kibana:5601
+    routes:
+      - name: debug-kibana
+        hosts:
+          - kibana.vasile
+        paths:
+          - /
+  - name: debug-mercure
+    url: http://internal-mercure
+    routes:
+      - name: debug-mercure
+        hosts:
+          - public.vasile
+        paths:
+          - /mercure

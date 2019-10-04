@@ -1,0 +1,16 @@
+security:
+  providers:
+    mongodb:
+      id: App\Security\UserProvider
+  firewalls:
+    dev:
+      pattern: ^/(_(profiler|wdt)|css|images|js)/
+      security: false
+    api:
+      pattern:    ^/api
+      stateless:  true
+      security: false
+
+  access_control:
+    - { path: /healthcheck, roles: [ IS_AUTHENTICATED_ANONYMOUSLY ] }
+    - { path: ^/api, roles: [ IS_AUTHENTICATED_FULLY ] }
