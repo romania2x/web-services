@@ -20,7 +20,9 @@ import CircleStyle from 'ol/style/Circle';
 import Snap from 'ol/interaction/Snap';
 import GeometryType from 'ol/geom/GeometryType';
 import {OsmImportOlControl} from '../ol-controls/osm-import.ol-control';
-import {OLOSMImportModalComponent} from "../modals/ol/osm-import.modal";
+import {OLOSMImportModalComponent} from '../modals/ol/osm-import/osm-import.modal';
+import Select from "ol/interaction/Select";
+import {click, pointerMove} from "ol/events/condition";
 
 export class MapController {
   private mapInstance: Map;
@@ -32,6 +34,8 @@ export class MapController {
 
   private drawInteraction: Draw;
   private snapInteraction: Snap;
+  private selectInteraction: Select;
+  private hoverInteraction: Select;
 
   constructor(private target: HTMLElement, private dialogService: DialogService) {
     this.vectorSource = new VectorSource();
@@ -182,4 +186,44 @@ export class MapController {
   getBaseLayerUrl(): string | null {
     return this.baseLayer ? (this.baseLayer.getSource() as XYZ).getUrls()[0] : null;
   }
+
+  enableSelection(callback = null): MapController {
+    this.selectInteraction = new Select({
+      condition: click
+    });
+    this.mapInstance.addInteraction(this.selectInteraction);
+
+    if (callback) {
+      this.selectInteraction.on('select', callback);
+    }
+    return this;
+  }
+
+  disableSelection() {
+    this.mapInstance.removeInteraction(this.selectInteraction);
+    this.selectInteraction = null;
+  }
+
+  onSelection(callback) {
+    this.selectInteraction.on('select', callback);
+  }
+
+  enableHovering(): MapController {
+    this.hoverInteraction = new Select({
+      condition: pointerMove
+    });
+
+    this.mapInstance.addInteraction(this.hoverInteraction);
+    return this;
+  }
+
+  disableHovering() {
+    this.mapInstance.removeInteraction(this.hoverInteraction);
+    this.hoverInteraction = null;
+  }
+
+  getMap(): Map {
+    return this.mapInstance;
+  }
+
 }

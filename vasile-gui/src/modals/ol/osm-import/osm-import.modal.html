@@ -1,0 +1,40 @@
+<div class="row" style="min-height: 500px">
+  <div class="col-6">
+    <p-tabView>
+      <p-tabPanel header="Criteria">
+        <p-scrollPanel [style]="{width:'100%',height:'500px'}">
+          <p-treeTable [value]="criteria">
+            <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
+              <tr>
+                <td>
+                  <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+                  {{rowData.name}}
+                </td>
+                <td align="center">
+                  <p-multiSelect *ngIf="rowData.type && rowData.type == 'options'"
+                                 [style]="{width:'100%'}"
+                                 [options]="rowData.options"
+                                 [(ngModel)]="rowData.value"></p-multiSelect>
+                  <input *ngIf="rowData.type && rowData.type == 'query'" type="text"
+                         [(ngModel)]="rowData.value"
+                         class="form-control bg-dark text-light"/>
+                  <p-inputSwitch *ngIf="!rowData.type"
+                                 [(ngModel)]="rowData.selected"></p-inputSwitch>
+                </td>
+              </tr>
+            </ng-template>
+          </p-treeTable>
+        </p-scrollPanel>
+      </p-tabPanel>
+      <p-tabPanel header="Results"></p-tabPanel>
+    </p-tabView>
+  </div>
+  <div class="col-6">
+    <div #mapTarget style='width:100%;height:100%;display:block;'></div>
+  </div>
+  <div class="col-12 mt-3 mb-3">
+    <button class="btn btn-primary" (click)="searchOSM()">Search <i class="fas fa-fw"
+                                                                    [ngClass]="{'fa-search':!loadingState,'fa-spinner fa-spin':loadingState}"></i>
+    </button>
+  </div>
+</div>

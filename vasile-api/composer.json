@@ -14,7 +14,7 @@
         "elasticsearch/elasticsearch": "dev-master",
         "friendsofsymfony/rest-bundle": "^2.5",
         "graphaware/neo4j-php-ogm": "@rc",
-        "jms/serializer-bundle": "^3.4",
+        "jms/serializer-bundle": "^3.4@dev",
         "jsor/doctrine-postgis": "^2.0@dev",
         "neo4j/neo4j-bundle": "dev-master",
         "phayes/geophp": "dev-master",

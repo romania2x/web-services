@@ -33,8 +33,8 @@ import {CommonModule} from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {BaseLayersProvider} from '../providers/base-layers.provider';
 import {OLDrawingControlsModalComponent} from '../modals/ol/drawing-controls.modal';
-import {OLOSMImportModalComponent} from '../modals/ol/osm-import.modal';
-import {OsmProvider} from "../providers/osm.provider";
+import {OLOSMImportModalComponent} from '../modals/ol/osm-import/osm-import.modal';
+import {OsmProvider} from '../providers/osm.provider';
 
 
 window['$'] = $;

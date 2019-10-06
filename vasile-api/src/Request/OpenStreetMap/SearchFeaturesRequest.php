@@ -48,7 +48,17 @@ class SearchFeaturesRequest
     }
 
     /**
-     * @return array
+     * @param array|null $boundingBox
+     * @return SearchFeaturesRequest
+     */
+    public function setBoundingBox(?array $boundingBox): SearchFeaturesRequest
+    {
+        $this->boundingBox = $boundingBox;
+        return $this;
+    }
+
+    /**
+     * @return array|null
      */
     public function getLine(): ?array
     {
@@ -56,7 +66,17 @@ class SearchFeaturesRequest
     }
 
     /**
-     * @return array
+     * @param array|null $line
+     * @return SearchFeaturesRequest
+     */
+    public function setLine(?array $line): SearchFeaturesRequest
+    {
+        $this->line = $line;
+        return $this;
+    }
+
+    /**
+     * @return array|null
      */
     public function getPolygon(): ?array
     {
@@ -64,7 +84,17 @@ class SearchFeaturesRequest
     }
 
     /**
-     * @return array
+     * @param array|null $polygon
+     * @return SearchFeaturesRequest
+     */
+    public function setPolygon(?array $polygon): SearchFeaturesRequest
+    {
+        $this->polygon = $polygon;
+        return $this;
+    }
+
+    /**
+     * @return array|null
      */
     public function getRoad(): ?array
     {
@@ -72,10 +102,32 @@ class SearchFeaturesRequest
     }
 
     /**
-     * @return array
+     * @param array|null $road
+     * @return SearchFeaturesRequest
+     */
+    public function setRoad(?array $road): SearchFeaturesRequest
+    {
+        $this->road = $road;
+        return $this;
+    }
+
+    /**
+     * @return array|null
      */
     public function getPoint(): ?array
     {
         return $this->point;
     }
+
+    /**
+     * @param array|null $point
+     * @return SearchFeaturesRequest
+     */
+    public function setPoint(?array $point): SearchFeaturesRequest
+    {
+        $this->point = $point;
+        return $this;
+    }
+
+
 }

@@ -174,7 +174,7 @@
         "version": "1.x-dev"
     },
     "hoa/compiler": {
-        "version": "3.17.08.08"
+        "version": "3.x-dev"
     },
     "hoa/consistency": {
         "version": "1.17.05.02"
@@ -192,7 +192,7 @@
         "version": "2.17.01.10"
     },
     "hoa/math": {
-        "version": "1.17.05.16"
+        "version": "1.x-dev"
     },
     "hoa/protocol": {
         "version": "1.17.01.14"
@@ -210,16 +210,16 @@
         "version": "2.17.01.16"
     },
     "hoa/zformat": {
-        "version": "1.17.01.10"
+        "version": "1.x-dev"
     },
     "jdorn/sql-formatter": {
         "version": "v1.2.17"
     },
     "jms/metadata": {
-        "version": "2.0.0"
+        "version": "2.x-dev"
     },
     "jms/serializer": {
-        "version": "3.1.1"
+        "version": "3.3-dev"
     },
     "jms/serializer-bundle": {
         "version": "3.0",
@@ -228,12 +228,7 @@
             "branch": "master",
             "version": "3.0",
             "ref": "384cec52df45f3bfd46a09930d6960a58872b268"
-        },
-        "files": [
-            "config/packages/dev/jms_serializer.yaml",
-            "config/packages/jms_serializer.yaml",
-            "config/packages/prod/jms_serializer.yaml"
-        ]
+        }
     },
     "jsor/doctrine-postgis": {
         "version": "2.x-dev"

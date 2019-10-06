@@ -65,10 +65,11 @@ class PlanetRepository extends EntityRepository
             }
             switch ($definition['type']) {
                 case 'query':
-                    $criteria[] = "{$key} like '{$value}'";
+                    $criteria[] = "lower(unaccent({$key})) like unaccent(lower('{$value}'))";
                     break;
                 case 'options':
-                    $criteria[] = "{$key} in ('" . implode("','", $value) . "')";
+                    $value = implode("','", $value);
+                    $criteria[] = "{$key} in ('{$value}}')";
                     break;
             }
         }

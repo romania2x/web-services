@@ -5,7 +5,7 @@ fos_rest:
     include_format: false
   view:
     view_response_listener: force
-    serialize_null: true
+    serialize_null: false
     default_engine: jms.serializer
   format_listener:
     rules:
@@ -17,5 +17,7 @@ fos_rest:
   allowed_methods_listener: true
   access_denied_listener:
     json: true
+#  service:
+#    serializer: fos_rest.serializer.jms
   serializer:
-    serialize_null: true
+    serialize_null: false
