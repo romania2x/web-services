@@ -5,11 +5,10 @@ import {OsmProvider} from '../../../providers/osm.provider';
 import VectorSource from 'ol/source/Vector';
 import GeoJSON from 'ol/format/GeoJSON';
 import VectorLayer from 'ol/layer/Vector';
-import Style from "ol/style/Style";
-import Circle from "ol/geom/Circle";
-import Fill from "ol/style/Fill";
-import Stroke from "ol/style/Stroke";
-import Text from "ol/style/Text";
+import Style from 'ol/style/Style';
+import Fill from 'ol/style/Fill';
+import Stroke from 'ol/style/Stroke';
+import Text from 'ol/style/Text';
 
 @Component({
   moduleId: 'app-modal-ol-osm-import',
@@ -17,8 +16,9 @@ import Text from "ol/style/Text";
 })
 export class OLOSMImportModalComponent implements AfterViewInit {
   @ViewChild('mapTarget', {static: false}) mapTarget: ElementRef;
-  criteria: TreeNode[] = [];
   loadingState = false;
+  criteria: TreeNode[] = [];
+  results: any[] = [];
 
   private olController: MapController;
   private resultVectorLayer: VectorLayer;
@@ -85,6 +85,9 @@ export class OLOSMImportModalComponent implements AfterViewInit {
     });
 
     this.osmProvider.fetchLayers(criteria).subscribe(results => {
+
+      console.log(results);
+
       this.resultVectorSource.forEachFeature((feature) => {
         this.resultVectorSource.removeFeature(feature);
       });
@@ -122,7 +125,7 @@ export class OLOSMImportModalComponent implements AfterViewInit {
           layer: 'point'
         },
         leaf: false,
-        children: data.point.map(property => this.buildLayerPropertyMenuItem(property))
+        children: data.point.map(property => OLOSMImportModalComponent.buildLayerPropertyMenuItem(property))
       },
       {
         data: {
@@ -131,7 +134,7 @@ export class OLOSMImportModalComponent implements AfterViewInit {
           layer: 'line'
         },
         leaf: false,
-        children: data.line.map(property => this.buildLayerPropertyMenuItem(property))
+        children: data.line.map(property => OLOSMImportModalComponent.buildLayerPropertyMenuItem(property))
       },
       {
         data: {
@@ -140,7 +143,7 @@ export class OLOSMImportModalComponent implements AfterViewInit {
           layer: 'polygon'
         },
         leaf: false,
-        children: data.polygon.map(property => this.buildLayerPropertyMenuItem(property))
+        children: data.polygon.map(property => OLOSMImportModalComponent.buildLayerPropertyMenuItem(property))
       },
       {
         data: {
@@ -149,7 +152,7 @@ export class OLOSMImportModalComponent implements AfterViewInit {
           layer: 'road'
         },
         leaf: false,
-        children: data.road.map(property => this.buildLayerPropertyMenuItem(property))
+        children: data.road.map(property => OLOSMImportModalComponent.buildLayerPropertyMenuItem(property))
       }
     ];
   }
@@ -157,7 +160,7 @@ export class OLOSMImportModalComponent implements AfterViewInit {
   /**
    * Build MenuItem based on layer property
    */
-  private buildLayerPropertyMenuItem(property) {
+  private static buildLayerPropertyMenuItem(property) {
     switch (property.type) {
       case 'options':
         return {

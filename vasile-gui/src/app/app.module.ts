@@ -35,6 +35,7 @@ import {BaseLayersProvider} from '../providers/base-layers.provider';
 import {OLDrawingControlsModalComponent} from '../modals/ol/drawing-controls.modal';
 import {OLOSMImportModalComponent} from '../modals/ol/osm-import/osm-import.modal';
 import {OsmProvider} from '../providers/osm.provider';
+import {TableModule} from "primeng/table";
 
 
 window['$'] = $;
@@ -126,7 +127,8 @@ const config: GoldenLayoutConfiguration = {
     TreeTableModule,
     ScrollPanelModule,
     MultiSelectModule,
-    InputSwitchModule
+    InputSwitchModule,
+    TableModule
   ],
   providers: [
     SystemProvider,

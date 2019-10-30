@@ -23,20 +23,20 @@ export class DashboardComponent implements OnInit {
 
   public sync() {
 
-    this.systemProvider.fetchAPIHealthcheck().subscribe(
-      (result) => {
-        this.ngZone.run(() => {
-          this.setHealthchecks(result, true);
-        });
-        setTimeout(() => this.sync(), DashboardComponent.HEALTHCHECK_REFRESH_INTERVAL);
-      },
-      (error) => {
-        this.ngZone.run(() => {
-          this.setHealthchecks(error.error, false);
-        });
-        setTimeout(() => this.sync(), DashboardComponent.HEALTHCHECK_REFRESH_INTERVAL);
-      }
-    );
+    // this.systemProvider.fetchAPIHealthcheck().subscribe(
+    //   (result) => {
+    //     this.ngZone.run(() => {
+    //       this.setHealthchecks(result, true);
+    //     });
+    //     setTimeout(() => this.sync(), DashboardComponent.HEALTHCHECK_REFRESH_INTERVAL);
+    //   },
+    //   (error) => {
+    //     this.ngZone.run(() => {
+    //       this.setHealthchecks(error.error, false);
+    //     });
+    //     setTimeout(() => this.sync(), DashboardComponent.HEALTHCHECK_REFRESH_INTERVAL);
+    //   }
+    // );
   }
 
   private setHealthchecks(healthchecks: any[], state) {

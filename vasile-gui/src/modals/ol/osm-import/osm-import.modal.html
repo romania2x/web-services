@@ -26,7 +26,30 @@
           </p-treeTable>
         </p-scrollPanel>
       </p-tabPanel>
-      <p-tabPanel header="Results"></p-tabPanel>
+      <p-tabPanel header="Results">
+<!--        <p-table [value]="results">-->
+<!--          <ng-template pTemplate="caption">-->
+<!--            <div style="text-align:left">-->
+<!--              <p-multiSelect [options]="cols" [(ngModel)]="selectedColumns" optionLabel="header"-->
+<!--                             selectedItemsLabel="{0} columns selected" [style]="{minWidth: '200px'}" defaultLabel="Choose Columns"></p-multiSelect>-->
+<!--            </div>-->
+<!--          </ng-template>-->
+<!--          <ng-template pTemplate="header" let-columns>-->
+<!--            <trq>-->
+<!--              <th *ngFor="let col of columns">-->
+<!--                {{col.header}}-->
+<!--              </th>-->
+<!--            </tr>-->
+<!--          </ng-template>-->
+<!--          <ng-template pTemplate="body" let-rowData let-columns="columns">-->
+<!--            <tr>-->
+<!--              <td *ngFor="let col of columns">-->
+<!--                {{rowData[col.field]}}-->
+<!--              </td>-->
+<!--            </tr>-->
+<!--          </ng-template>-->
+<!--        </p-table>-->
+      </p-tabPanel>
     </p-tabView>
   </div>
   <div class="col-6">
