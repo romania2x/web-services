@@ -37,6 +37,7 @@ services:
 
   public-api-php-fpm:
     build: infrastructure/fpm
+    privileged: true
     depends_on:
       - internal-postgis
       - internal-mongo

@@ -13,3 +13,4 @@ framework:
       # Route your messages to the transports
       'App\Message\HeartbeatMessage': async
       'App\Message\IndexOpenStreetMapEntityMessage': async
+      App\Message\DataGovRo\Companies\LoadCompaniesSet: async

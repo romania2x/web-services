@@ -137,6 +137,9 @@
     "egulias/email-validator": {
         "version": "2.1.10"
     },
+    "facebook/webdriver": {
+        "version": "1.7.1"
+    },
     "fig/link-util": {
         "version": "1.0.0"
     },
@@ -512,6 +515,9 @@
     },
     "symfony/orm-pack": {
         "version": "v1.0.6"
+    },
+    "symfony/panther": {
+        "version": "1.0.x-dev"
     },
     "symfony/phpunit-bridge": {
         "version": "4.3",

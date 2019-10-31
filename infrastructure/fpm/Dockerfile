@@ -21,7 +21,7 @@ RUN apt -y install \
     php7.3-pdo-pgsql \
     php7.3-dev \
     php7.3-redis \
-    libgeos-dev osm2pgsql
+    libgeos-dev osm2pgsql unzip
 
 RUN echo "$(curl -sS https://composer.github.io/installer.sig) -" > composer-setup.php.sig \
         && curl -sS https://getcomposer.org/installer | tee composer-setup.php | sha384sum -c composer-setup.php.sig \
@@ -44,12 +44,16 @@ COPY geos.ini  /etc/php/7.3/cli/conf.d/20-geos.ini
 
 COPY pool.conf /etc/php/7.3/fpm/pool.d/www.conf
 
+RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+RUN dpkg -i google-chrome-stable_current_amd64.deb; apt-get -fy install
 
 CMD ["php-fpm7.3", "-F"]
 
 WORKDIR /app
 EXPOSE 9001
-RUN usermod -u 1000 www-data && groupmod -g 1000 www-data && \
+
+RUN mkdir /var/www && usermod -u 1000 www-data && groupmod -g 1000 www-data && \
     touch /var/log/php7.3-fpm.log && chown www-data:www-data /var/log/php7.3-fpm.log && \
-    mkdir /run/php && chown www-data:www-data /run/php -R
+    mkdir /run/php && chown www-data:www-data /run/php -R && chown www-data:www-data /var/www -R
+RUN echo 'kernel.unprivileged_userns_clone=1' > /etc/sysctl.d/00-local-userns.conf
 USER 1000:1000

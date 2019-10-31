@@ -34,6 +34,7 @@
         "symfony/messenger": "4.3.*",
         "symfony/monolog-bundle": "^3.1",
         "symfony/orm-pack": "*",
+        "symfony/panther": "^1.0@dev",
         "symfony/process": "4.3.*",
         "symfony/security-bundle": "4.3.*",
         "symfony/serializer-pack": "*",
