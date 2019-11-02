@@ -3,10 +3,13 @@ declare(strict_types = 1);
 
 namespace App\MessageHandler\Crawler\DataGovRo\Companies;
 
+use App\Entity\OpenData\Source;
 use App\Message\DataGovRo\Companies\LoadCompaniesSet;
 use App\MessageHandler\AbstractMessageHandler;
+use App\Repository\Entity\OpenData\SourceRepository;
 use Facebook\WebDriver\Remote\RemoteWebElement;
 use Facebook\WebDriver\WebDriverBy;
+use GraphAware\Neo4j\OGM\EntityManager;
 use Symfony\Component\Panther\Client;
 
 /**
@@ -15,6 +18,27 @@ use Symfony\Component\Panther\Client;
  */
 class LoadCompaniesSetHandler extends AbstractMessageHandler
 {
+    /**
+     * @var SourceRepository
+     */
+    private $sourceRepository;
+
+    /**
+     * LoadCompaniesSetHandler constructor.
+     * @param EntityManager $entityManager
+     */
+    public function __construct(EntityManager $entityManager)
+    {
+        parent::__construct();
+        $this->sourceRepository = $entityManager->getRepository(Source::class);
+    }
+
+    /**
+     * @param LoadCompaniesSet $message
+     * @throws \Facebook\WebDriver\Exception\NoSuchElementException
+     * @throws \Facebook\WebDriver\Exception\TimeOutException
+     * @throws \Exception
+     */
     public function __invoke(LoadCompaniesSet $message)
     {
         $this->log("Processing companies set {$message->getSource()}");
@@ -30,17 +54,28 @@ class LoadCompaniesSetHandler extends AbstractMessageHandler
             'resources' => []
         ];
 
+        $companiesSetSource = $this->sourceRepository->createOrUpdate(
+            $message->getSource(),
+            $set['title'],
+            $set['description']
+        );
+
         /** @var RemoteWebElement $resource */
         foreach ($crawler->filter('.resource-list .resource-item') as $resource) {
             $resource = [
-                'name' => trim($resource->findElement(WebDriverBy::cssSelector('.heading'))->getText()),
-                'resource' => $resource->findElement(WebDriverBy::cssSelector('ul.dropdown-menu > li:nth-child(2) > a'))->getAttribute('href')
+                'title' => trim($resource->findElement(WebDriverBy::cssSelector('.heading'))->getText()),
+                'source' => $resource->findElement(WebDriverBy::cssSelector('ul.dropdown-menu > li:nth-child(2) > a'))->getAttribute('href')
             ];
 
             $set['resources'][] = $resource;
+
+            $companiesSubSetSource = $this->sourceRepository->createOrUpdate(
+                $resource['source'],
+                $resource['title'],
+                null,
+                $companiesSetSource
+            );
         }
 
-        print_r($set);
-        die;
     }
 }

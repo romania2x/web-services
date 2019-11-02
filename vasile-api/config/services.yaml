@@ -44,3 +44,7 @@ services:
 
   App\Cache\OSMPropertiesCache:
     arguments: ['@cache']
+
+  App\MessageHandler\Crawler\DataGovRo\Companies\LoadCompaniesSetHandler:
+    arguments:
+      $entityManager: '@neo4j.entity_manager.default'
