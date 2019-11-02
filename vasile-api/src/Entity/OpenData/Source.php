@@ -14,6 +14,8 @@ use GraphAware\Neo4j\OGM\Common\Collection;
  */
 class Source
 {
+    const TAG_COMPANIES_DATA_GOV_RO = 'companies.data_gov_ro';
+
     /**
      * @var int
      * @Graph\GraphId()
@@ -38,6 +40,17 @@ class Source
      */
     private $url;
 
+    /**
+     * @var array
+     * @Graph\Property(type="array")
+     */
+    private $tags = [];
+
+    /**
+     * @var bool
+     * @Graph\Property(type="boolean")
+     */
+    private $downloadable = false;
     /**
      * @var Source
      * @Graph\Relationship(type="PARENT", direction="INCOMING", collection=false, mappedBy="children", targetEntity="Source")
@@ -153,6 +166,42 @@ class Source
     public function setChildren($children): Source
     {
         $this->children = $children;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTags(): array
+    {
+        return $this->tags;
+    }
+
+    /**
+     * @param array $tags
+     * @return Source
+     */
+    public function setTags(array $tags): Source
+    {
+        $this->tags = $tags;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDownloadable(): bool
+    {
+        return $this->downloadable;
+    }
+
+    /**
+     * @param bool $downloadable
+     * @return Source
+     */
+    public function setDownloadable(bool $downloadable): Source
+    {
+        $this->downloadable = $downloadable;
         return $this;
     }
 }

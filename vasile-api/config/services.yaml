@@ -48,3 +48,5 @@ services:
   App\MessageHandler\Crawler\DataGovRo\Companies\LoadCompaniesSetHandler:
     arguments:
       $entityManager: '@neo4j.entity_manager.default'
+      $messageBus: '@message_bus'
+  App\MessageHandler\Crawler\DataGovRo\Companies\DownloadCompaniesSubsetHandler: ~

@@ -16,6 +16,8 @@ class SourceRepository extends BaseRepository
      * @param string $url
      * @param string $title
      * @param string|null $description
+     * @param bool|null $downloadable
+     * @param array|null $tags
      * @param Source|null $parent
      * @return Source
      * @throws \Exception
@@ -24,19 +26,25 @@ class SourceRepository extends BaseRepository
         string $url,
         string $title,
         ?string $description = null,
+        ?bool $downloadable = false,
+        ?array $tags = [],
         ?Source $parent = null
     ): Source {
         /** @var Source $source */
         if ($source = $this->findOneBy(['url' => $url])) {
             $source
                 ->setTitle($title)
-                ->setDescription($description);
+                ->setDescription($description)
+                ->setDownloadable($downloadable)
+                ->setTags($tags);
         } else {
             $source = new Source();
             $source
                 ->setUrl($url)
                 ->setTitle($title)
-                ->setDescription($description);
+                ->setDescription($description)
+                ->setDownloadable($downloadable)
+                ->setTags($tags);
         }
 
         if ($parent) {
