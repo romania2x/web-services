@@ -2,7 +2,8 @@
 
 namespace App\MessageHandler\Crawler\DataGovRo\Companies;
 
-
+use App\Entity\OpenData\Source;
+use App\Helpers\LanguageHelpers;
 use App\Message\DataGovRo\Companies\DownloadCompaniesSubset;
 use App\MessageHandler\AbstractMessageHandler;
 use GuzzleHttp\Client as HttpClient;
@@ -26,6 +27,7 @@ class DownloadCompaniesSubsetHandler extends AbstractMessageHandler
     {
         parent::__construct();
         $this->httpClient = new HttpClient([
+            //todo: fake user-agents using faker
             RequestOptions::HEADERS => [
                 'User-Agent' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36'
             ]
@@ -38,26 +40,51 @@ class DownloadCompaniesSubsetHandler extends AbstractMessageHandler
      */
     public function __invoke(DownloadCompaniesSubset $message)
     {
-        $this->log("Downloading {$message->getSource()->getUrl()}");
+        $localFile = $this->generateLocalFilePath($message->getSource());
 
-        //save remote file to a temp file
-        $localFile = tempnam(sys_get_temp_dir(), 'resource_');
-        $this->httpClient->get($message->getSource()->getUrl(), [RequestOptions::SINK => $localFile]);
+        if (file_exists($localFile)) {
+            $this->log("Cache hit {$message->getSource()->getUrl()}");
 
-        $csvHandler = fopen($localFile, 'r');
+        } else {
+            $this->log("Downloading {$message->getSource()->getUrl()}");
+            $this->httpClient->get($message->getSource()->getUrl(), [RequestOptions::SINK => $localFile]);
+        }
+
+        $csvHandle = fopen($localFile, 'r');
+        $defaultKeys = ['DENUMIRE', 'CUI', 'COD_INMATRICULARE', 'STARE_FIRMA', 'JUDET', 'LOCALITATE'];
         $keys = null;
 
-        while ($row = fgetcsv($csvHandler, 0, '|')) {
-            if (!$keys) {
+        while ($row = $this->readWeirdFormat($csvHandle)) {
+
+            if (!$keys && $row[0] == $defaultKeys[0]) {
                 $keys = $row;
                 continue;
+            } elseif (!$keys) {
+                $keys = array_slice($defaultKeys, 0, count($row));
             }
             $row = array_combine($keys, $row);
             print_r($row);
             break;
         }
-        fclose($csvHandler);
-        unlink($localFile);
+        fclose($csvHandle);
     }
 
+    /**
+     * @param $csvHandle
+     * @return array
+     */
+    private function readWeirdFormat($csvHandle): array
+    {
+        return array_map('App\Helpers\LanguageHelpers::safeLatinText', fgetcsv($csvHandle, 0, '|'));
+    }
+
+    /**
+     * @param Source $source
+     * @return string
+     */
+    private function generateLocalFilePath(Source $source)
+    {
+        //todo: figure out a better dir/file format
+        return sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'resources_' . md5($source->getUrl());
+    }
 }
