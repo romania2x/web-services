@@ -5,9 +5,14 @@ namespace App\MessageHandler\Crawler\DataGovRo\Companies;
 use App\Entity\OpenData\Source;
 use App\Helpers\LanguageHelpers;
 use App\Message\DataGovRo\Companies\DownloadCompaniesSubset;
+use App\Message\DataGovRo\Companies\PreloadStateMap;
+use App\Message\DataGovRo\Companies\SyncCompaniesSubset;
 use App\MessageHandler\AbstractMessageHandler;
+use App\Repository\Entity\OpenData\SourceRepository;
+use GraphAware\Neo4j\OGM\EntityManagerInterface;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\RequestOptions;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * Class DownloadCompaniesSubsetHandler
@@ -21,16 +26,24 @@ class DownloadCompaniesSubsetHandler extends AbstractMessageHandler
     private $httpClient;
 
     /**
+     * @var SourceRepository
+     */
+    private $sourceRepository;
+
+    /**
      * @var string
      */
     private $downloadCacheDir;
 
     /**
      * DownloadCompaniesSubsetHandler constructor.
+     * @param EntityManagerInterface $entityManager
      * @param string $projectDir
      */
-    public function __construct(string $projectDir)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        string $projectDir
+    ) {
         parent::__construct();
         $this->httpClient = new HttpClient([
             //todo: fake user-agents using faker
@@ -38,6 +51,7 @@ class DownloadCompaniesSubsetHandler extends AbstractMessageHandler
                 'User-Agent' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36'
             ]
         ]);
+        $this->sourceRepository = $entityManager->getRepository(Source::class);
         $this->downloadCacheDir = "$projectDir/download_cache/";
     }
 
@@ -47,42 +61,20 @@ class DownloadCompaniesSubsetHandler extends AbstractMessageHandler
      */
     public function __invoke(DownloadCompaniesSubset $message)
     {
-        $localFile = $this->generateLocalFilePath($message->getSource());
+        /** @var Source $source */
+        $source = $this->sourceRepository->find($message->getSourceId());
+        $localFile = $this->generateLocalFilePath($source);
 
-        if (file_exists($localFile)) {
-            $this->log("Cache hit {$message->getSource()->getUrl()}");
-
-        } else {
-            $this->log("Downloading {$message->getSource()->getUrl()}");
-            $this->httpClient->get($message->getSource()->getUrl(), [RequestOptions::SINK => $localFile]);
+        if (!file_exists($localFile)) {
+            $this->log("Downloading {$source->getUrl()}");
+            $this->httpClient->get($source->getUrl(), [RequestOptions::SINK => $localFile]);
         }
-//
-//        $csvHandle = fopen($localFile, 'r');
-//        $defaultKeys = ['DENUMIRE', 'CUI', 'COD_INMATRICULARE', 'STARE_FIRMA', 'JUDET', 'LOCALITATE'];
-//        $keys = null;
-//
-//        while ($row = $this->readWeirdFormat($csvHandle)) {
-//
-//            if (!$keys && $row[0] == $defaultKeys[0]) {
-//                $keys = $row;
-//                continue;
-//            } elseif (!$keys) {
-//                $keys = array_slice($defaultKeys, 0, count($row));
-//            }
-//            $row = array_combine($keys, $row);
-//            print_r($row);
-//            break;
-//        }
-//        fclose($csvHandle);
-    }
 
-    /**
-     * @param $csvHandle
-     * @return array
-     */
-    private function readWeirdFormat($csvHandle): array
-    {
-        return array_map('App\Helpers\LanguageHelpers::safeLatinText', fgetcsv($csvHandle, 0, '|'));
+        if (strpos($source->getUrl(), 'nomenclator') !== false) {
+            $this->messageBus->dispatch(new PreloadStateMap($source));
+        } else {
+            $this->messageBus->dispatch(new SyncCompaniesSubset($source));
+        }
     }
 
     /**

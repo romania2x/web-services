@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace App\Repository\Entity\OpenData;
 
 use App\Entity\OpenData\Source;
+use Doctrine\Common\Collections\ArrayCollection;
 use GraphAware\Neo4j\OGM\Repository\BaseRepository;
 
 /**
@@ -55,5 +56,22 @@ class SourceRepository extends BaseRepository
         $this->entityManager->flush();
 
         return $source;
+    }
+
+    /**
+     * @param string $tag
+     * @return array|Source[]
+     * @throws \Exception
+     */
+    public function findDownloadableResourcesByTag(string $tag): array
+    {
+        $query = $this->entityManager->createQuery(<<<EOL
+            match (s:Source{downloadable:true}) where single(tag in s.tags where tag = {tag}) return s
+EOL
+        );
+        $query->addEntityMapping('s', Source::class);
+        $query->setParameter('tag', $tag);
+
+        return (array) $query->execute();
     }
 }

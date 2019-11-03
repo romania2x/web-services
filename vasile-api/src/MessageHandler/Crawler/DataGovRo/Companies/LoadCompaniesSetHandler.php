@@ -25,10 +25,6 @@ class LoadCompaniesSetHandler extends AbstractMessageHandler
      */
     private $sourceRepository;
 
-    /**
-     * @var MessageBusInterface
-     */
-    private $messageBus;
 
     /**
      * LoadCompaniesSetHandler constructor.
@@ -39,7 +35,6 @@ class LoadCompaniesSetHandler extends AbstractMessageHandler
     {
         parent::__construct();
         $this->sourceRepository = $entityManager->getRepository(Source::class);
-        $this->messageBus = $messageBus;
     }
 
     /**

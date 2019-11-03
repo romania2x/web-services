@@ -90,6 +90,7 @@ services:
       - ./var/neo4j/plugins:/plugins
     ports:
       - 7474:7474
+      - 7687:7687
   internal-rabbitmq:
     image: rabbitmq:3.7.5-management
     environment:

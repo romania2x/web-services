@@ -21,7 +21,7 @@ RUN apt -y install \
     php7.3-pdo-pgsql \
     php7.3-dev \
     php7.3-redis \
-    libgeos-dev osm2pgsql unzip
+    libgeos-dev osm2pgsql unzip locales locales-all
 
 RUN echo "$(curl -sS https://composer.github.io/installer.sig) -" > composer-setup.php.sig \
         && curl -sS https://getcomposer.org/installer | tee composer-setup.php | sha384sum -c composer-setup.php.sig \
@@ -51,7 +51,6 @@ CMD ["php-fpm7.3", "-F"]
 
 WORKDIR /app
 EXPOSE 9001
-
 RUN mkdir /var/www && usermod -u 1000 www-data && groupmod -g 1000 www-data && \
     touch /var/log/php7.3-fpm.log && chown www-data:www-data /var/log/php7.3-fpm.log && \
     mkdir /run/php && chown www-data:www-data /run/php -R && chown www-data:www-data /var/www -R

@@ -5,10 +5,10 @@ namespace App\Message\DataGovRo\Companies;
 use App\Entity\OpenData\Source;
 
 /**
- * Class DownloadCompaniesSubset
+ * Class SyncCompaniesSubset
  * @package App\Message\DataGovRo\Companies
  */
-class DownloadCompaniesSubset
+class SyncCompaniesSubset
 {
     /**
      * @var string

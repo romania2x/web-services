@@ -14,3 +14,5 @@ framework:
       'App\Message\HeartbeatMessage': async
       'App\Message\IndexOpenStreetMapEntityMessage': async
       App\Message\DataGovRo\Companies\LoadCompaniesSet: async
+      App\Message\DataGovRo\Companies\DownloadCompaniesSubset: async
+      App\Message\DataGovRo\Companies\SyncCompaniesSubset: async
