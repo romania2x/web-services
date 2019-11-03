@@ -27,10 +27,17 @@ abstract class AbstractMessageHandler implements MessageHandlerInterface
 
     /**
      * @param string $message
+     * @param bool $rewind
      */
-    protected function log(string $message)
+    protected function log(string $message, bool $rewind = false)
     {
         $className = str_replace('App\MessageHandler\Crawler\\', '', get_called_class());
-        $this->output->writeln("[<info>{$className}</info>] $message");
+        $message = "[<info>{$className}</info>] $message";
+
+        if ($rewind) {
+            $this->output->write("$message\r");
+        } else {
+            $this->output->writeln($message);
+        }
     }
 }

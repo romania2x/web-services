@@ -49,4 +49,6 @@ services:
     arguments:
       $entityManager: '@neo4j.entity_manager.default'
       $messageBus: '@message_bus'
-  App\MessageHandler\Crawler\DataGovRo\Companies\DownloadCompaniesSubsetHandler: ~
+  App\MessageHandler\Crawler\DataGovRo\Companies\DownloadCompaniesSubsetHandler:
+    arguments:
+      $projectDir: '%kernel.project_dir%'

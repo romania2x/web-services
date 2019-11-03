@@ -21,9 +21,15 @@ class DownloadCompaniesSubsetHandler extends AbstractMessageHandler
     private $httpClient;
 
     /**
-     * DownloadCompaniesSubsetHandler constructor.
+     * @var string
      */
-    public function __construct()
+    private $downloadCacheDir;
+
+    /**
+     * DownloadCompaniesSubsetHandler constructor.
+     * @param string $projectDir
+     */
+    public function __construct(string $projectDir)
     {
         parent::__construct();
         $this->httpClient = new HttpClient([
@@ -32,6 +38,7 @@ class DownloadCompaniesSubsetHandler extends AbstractMessageHandler
                 'User-Agent' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36'
             ]
         ]);
+        $this->downloadCacheDir = "$projectDir/download_cache/";
     }
 
 
@@ -49,24 +56,24 @@ class DownloadCompaniesSubsetHandler extends AbstractMessageHandler
             $this->log("Downloading {$message->getSource()->getUrl()}");
             $this->httpClient->get($message->getSource()->getUrl(), [RequestOptions::SINK => $localFile]);
         }
-
-        $csvHandle = fopen($localFile, 'r');
-        $defaultKeys = ['DENUMIRE', 'CUI', 'COD_INMATRICULARE', 'STARE_FIRMA', 'JUDET', 'LOCALITATE'];
-        $keys = null;
-
-        while ($row = $this->readWeirdFormat($csvHandle)) {
-
-            if (!$keys && $row[0] == $defaultKeys[0]) {
-                $keys = $row;
-                continue;
-            } elseif (!$keys) {
-                $keys = array_slice($defaultKeys, 0, count($row));
-            }
-            $row = array_combine($keys, $row);
-            print_r($row);
-            break;
-        }
-        fclose($csvHandle);
+//
+//        $csvHandle = fopen($localFile, 'r');
+//        $defaultKeys = ['DENUMIRE', 'CUI', 'COD_INMATRICULARE', 'STARE_FIRMA', 'JUDET', 'LOCALITATE'];
+//        $keys = null;
+//
+//        while ($row = $this->readWeirdFormat($csvHandle)) {
+//
+//            if (!$keys && $row[0] == $defaultKeys[0]) {
+//                $keys = $row;
+//                continue;
+//            } elseif (!$keys) {
+//                $keys = array_slice($defaultKeys, 0, count($row));
+//            }
+//            $row = array_combine($keys, $row);
+//            print_r($row);
+//            break;
+//        }
+//        fclose($csvHandle);
     }
 
     /**
@@ -84,7 +91,6 @@ class DownloadCompaniesSubsetHandler extends AbstractMessageHandler
      */
     private function generateLocalFilePath(Source $source)
     {
-        //todo: figure out a better dir/file format
-        return sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'resources_' . md5($source->getUrl());
+        return $this->downloadCacheDir . 'resources_' . md5($source->getUrl());
     }
 }
