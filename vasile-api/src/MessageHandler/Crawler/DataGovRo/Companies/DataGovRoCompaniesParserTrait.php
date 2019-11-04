@@ -3,6 +3,7 @@
 namespace App\MessageHandler\Crawler\DataGovRo\Companies;
 
 use App\Entity\OpenData\Source;
+use Symfony\Component\Process\Process;
 
 trait DataGovRoCompaniesParserTrait
 {
@@ -46,7 +47,7 @@ trait DataGovRoCompaniesParserTrait
 
         $row = explode($this->separator, $row);
 
-        setlocale(LC_CTYPE, 'ro_RO.utf8');
+        setlocale(LC_ALL, 'ro_RO.utf8');
         $row = array_map(function ($string) {
             return iconv($this->encoding, 'ASCII//TRANSLIT', $string);
         }, $row);
@@ -69,25 +70,20 @@ trait DataGovRoCompaniesParserTrait
 
     /**
      * @param resource $fileHandle
+     * @param string $filePath
      */
-    protected function autoDetectConfiguration($fileHandle)
+    protected function autoDetectConfiguration($fileHandle, string $filePath)
     {
         $this->keys = [];
         $this->separator = null;
         $this->encoding = null;
 
+        $details = $this->getSourceFileInfo($filePath);
+
+        $this->encoding = $details['encoding'];
+
         $row = fgets($fileHandle);
         rewind($fileHandle);
-
-        $encoding = mb_detect_encoding($row);
-        switch ($encoding) {
-            case 'ASCII':
-                $this->encoding = 'ISO-8859-2';
-                break;
-            default:
-                $this->encoding = $encoding;
-                break;
-        }
 
         if (strpos($row, '|') > 0) {
             $this->separator = '|';
@@ -136,5 +132,26 @@ trait DataGovRoCompaniesParserTrait
             return $matches[0][0];
         }
         return null;
+    }
+
+    /**
+     * @param string $localFilePath
+     * @return array
+     */
+    protected function getSourceFileInfo(string $localFilePath)
+    {
+        $process = new Process("file -b --mime-encoding {$localFilePath}", getcwd());
+        $process->run();
+        $encoding = trim($process->getOutput());
+
+
+        $process = new Process("file -b -z {$localFilePath}", getcwd());
+        $process->run();
+        $description = trim($process->getOutput());
+
+        return [
+            'encoding' => $encoding,
+            'description' => $description
+        ];
     }
 }

@@ -58,7 +58,7 @@ class PreloadStateMapHandler extends AbstractMessageHandler
 
         $localFileHandle = fopen($localFile, 'r');
 
-        $this->autoDetectConfiguration($localFileHandle);
+        $this->autoDetectConfiguration($localFileHandle, $localFile);
 
         while ($row = $this->readWeirdFormat($localFileHandle)) {
             $this->companyStateCache->set(intval($row['COD']), $row['DENUMIRE']);

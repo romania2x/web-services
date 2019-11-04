@@ -48,7 +48,7 @@ class SyncCompaniesSubsetHandler extends AbstractMessageHandler
 
         $localFileHandle = fopen($localFile, 'r');
 
-        $this->autoDetectConfiguration($localFileHandle);
+        $this->autoDetectConfiguration($localFileHandle, $localFile);
 
         while ($row = $this->readWeirdFormat($localFileHandle)) {
             print_r($row);
