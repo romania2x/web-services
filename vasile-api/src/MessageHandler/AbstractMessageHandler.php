@@ -16,7 +16,7 @@ abstract class AbstractMessageHandler implements MessageHandlerInterface
     /**
      * @var OutputInterface
      */
-    private $output;
+    protected $output;
 
     /**
      * @var MessageBusInterface

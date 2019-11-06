@@ -3,10 +3,12 @@
 namespace App\MessageHandler\Crawler\DataGovRo\Companies;
 
 use App\Entity\OpenData\Source;
+use App\Helpers\LanguageHelpers;
 use Symfony\Component\Process\Process;
 
 trait DataGovRoCompaniesParserTrait
 {
+    protected $locale = 'ro_RO.utf8';
     /**
      * @var string
      */
@@ -33,27 +35,31 @@ trait DataGovRoCompaniesParserTrait
      */
     protected function readWeirdFormat($csvHandle): ?array
     {
-        $row = trim(fgets($csvHandle));
-
-        switch ($this->encoding) {
-            case 'ISO-8859-2':
-                $row = mb_convert_encoding($row, 'UTF-8', $this->encoding);
-                break;
-        }
-
-        if ($row == '') {
+        $row = fgets($csvHandle);
+        if ($row === false) {
             return null;
         }
+        $row = trim(LanguageHelpers::asciiTranslit($row, $this->encoding));
 
-        $row = explode($this->separator, $row);
+        if ($row == '') {
+            return [];
+        }
 
-        setlocale(LC_ALL, 'ro_RO.utf8');
-        $row = array_map(function ($string) {
-            return iconv($this->encoding, 'ASCII//TRANSLIT', $string);
-        }, $row);
+        $row = array_map('trim', explode($this->separator, $row));
 
         if (count($this->keys) == 0) {
             return $row;
+        }
+
+        if (count($this->keys) != count($row)) {
+            if (count($row) == 1) {
+                return [];
+            } elseif (count($this->keys) < count($row)) {
+                $row = array_slice($row, 0, count($row));
+            } else {
+                var_dump($this->keys, $row);
+                die;
+            }
         }
 
         return array_combine($this->keys, $row);
@@ -76,13 +82,9 @@ trait DataGovRoCompaniesParserTrait
     {
         $this->keys = [];
         $this->separator = null;
-        $this->encoding = null;
+        $this->encoding = LanguageHelpers::mimeEncoding($filePath);
 
-        $details = $this->getSourceFileInfo($filePath);
-
-        $this->encoding = $details['encoding'];
-
-        $row = fgets($fileHandle);
+        $row = LanguageHelpers::asciiTranslit(fgets($fileHandle), $this->encoding);
         rewind($fileHandle);
 
         if (strpos($row, '|') > 0) {
@@ -95,15 +97,10 @@ trait DataGovRoCompaniesParserTrait
 
         $this->keys = $this->readWeirdFormat($fileHandle);
 
-        if (!isset($this->keys[0])) {
-            var_dump($this->keys);
-            die;
-        }
-
         if (!in_array($this->keys[0], ['DENUMIRE', 'COD'])) {
             if (count($this->keys) == 2) {
                 $this->keys = ['COD', 'DENUMIRE'];
-            } elseif (count($this->keys) > 4) {
+            } elseif (count($this->keys) > 2) {
                 $this->keys = array_slice([
                     'DENUMIRE',
                     'CUI',
@@ -132,26 +129,5 @@ trait DataGovRoCompaniesParserTrait
             return $matches[0][0];
         }
         return null;
-    }
-
-    /**
-     * @param string $localFilePath
-     * @return array
-     */
-    protected function getSourceFileInfo(string $localFilePath)
-    {
-        $process = new Process("file -b --mime-encoding {$localFilePath}", getcwd());
-        $process->run();
-        $encoding = trim($process->getOutput());
-
-
-        $process = new Process("file -b -z {$localFilePath}", getcwd());
-        $process->run();
-        $description = trim($process->getOutput());
-
-        return [
-            'encoding' => $encoding,
-            'description' => $description
-        ];
     }
 }

@@ -1,6 +1,9 @@
 <?php
+declare(strict_types = 1);
 
 namespace App\Helpers;
+
+use Symfony\Component\Process\Process;
 
 /**
  * Class LanguageHelpers
@@ -8,21 +11,27 @@ namespace App\Helpers;
  */
 abstract class LanguageHelpers
 {
-    public static function safeLatinText(string $text)
+    private static $locale;
+
+    public static function mimeEncoding(string $filePath): string
     {
-        //todo: romanian documents -> ISO-8859-2
-        //todo: default -> UTF-8
-//        setlocale(LC_CTYPE, 'ro_RO');
-//        $text = mb_convert_encoding($text, 'UTF-8', 'ISO-8859-2');
-        $encoding = mb_detect_encoding($text);
-        switch (mb_detect_encoding($text)) {
-            case 'ASCII':
-                $encoding = 'ISO-8859-2';
-                break;
-            case 'UTF-8':
-                break;
+        $process = new Process("file -b --mime-encoding {$filePath}", getcwd());
+        $process->run();
+        return trim($process->getOutput());
+    }
+
+    /**
+     * @param string $string
+     * @param string $sourceEncoding
+     * @param string $locale
+     * @return false|string
+     */
+    public static function asciiTranslit(string $string, string $sourceEncoding, string $locale = 'ro_RO.utf8')
+    {
+        if ($locale != self::$locale) {
+            self::$locale = $locale;
+            setlocale(LC_ALL, self::$locale);
         }
-        var_dump($encoding);
-        return iconv($encoding, 'ASCII//TRANSLIT', $text);
+        return iconv($sourceEncoding, 'ASCII//TRANSLIT', $string);
     }
 }
