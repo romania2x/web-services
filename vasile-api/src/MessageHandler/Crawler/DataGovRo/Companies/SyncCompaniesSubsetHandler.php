@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace App\MessageHandler\Crawler\DataGovRo\Companies;
 
+use App\Elasticsearch\Indexer;
 use App\Entity\OpenData\Source;
 use App\Message\DataGovRo\Companies\SyncCompaniesSubset;
 use App\MessageHandler\AbstractMessageHandler;
@@ -26,24 +27,24 @@ class SyncCompaniesSubsetHandler extends AbstractMessageHandler
     private $sourceRepository;
 
     /**
-     * @var ElasticSearchClient
+     * @var Indexer
      */
-    private $elasticSearchClient;
+    private $indexer;
 
     /**
      * SyncCompaniesSubsetHandler constructor.
      * @param EntityManagerInterface $entityManager
-     * @param ElasticSearchClient $elasticSearchClient
+     * @param Indexer $indexer
      * @param string $projectDir
      */
     public function __construct(
         EntityManagerInterface $entityManager,
-        ElasticSearchClient $elasticSearchClient,
+        Indexer $indexer,
         string $projectDir
     ) {
         parent::__construct();
         $this->sourceRepository = $entityManager->getRepository(Source::class);
-        $this->elasticSearchClient = $elasticSearchClient;
+        $this->indexer = $indexer;
         $this->downloadCacheDir = "$projectDir/download_cache/";
     }
 
@@ -75,13 +76,8 @@ class SyncCompaniesSubsetHandler extends AbstractMessageHandler
             foreach ($row as $key => $value) {
                 $companyBuilder->addData($key, $value, $date);
             }
-            $this->elasticSearchClient->index(
-                [
-                    'index' => 'data-gov-ro_companies',
-                    'id' => $companyBuilder->getNationalUniqueIdentification(),
-                    'body' => $companyBuilder->getData()
-                ]
-            );
+
+            $this->indexer->indexCompany($companyBuilder->getCompany());
             $progress->advance();
         }
         $progress->finish();;

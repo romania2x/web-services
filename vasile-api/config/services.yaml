@@ -63,6 +63,7 @@ services:
   App\MessageHandler\Crawler\DataGovRo\Companies\SyncCompaniesSubsetHandler:
     arguments:
       $entityManager: '@neo4j.entity_manager.default'
+      $indexer: '@App\Elasticsearch\Indexer'
       $projectDir: '%kernel.project_dir%'
 
   App\MessageHandler\Crawler\DataGovRo\Companies\PreloadStateMapHandler:
@@ -70,3 +71,8 @@ services:
       $entityManager: '@neo4j.entity_manager.default'
       $companyStateCache: '@App\Cache\CompanyStateCache'
       $projectDir: '%kernel.project_dir%'
+
+  App\Elasticsearch\Indexer:
+    arguments:
+      $serializer: "@jms_serializer.serializer"
+      $elasticSearchClient: '@Elasticsearch\Client'
