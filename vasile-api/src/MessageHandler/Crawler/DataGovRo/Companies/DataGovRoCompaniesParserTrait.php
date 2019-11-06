@@ -45,7 +45,9 @@ trait DataGovRoCompaniesParserTrait
             return [];
         }
 
-        $row = array_map('trim', explode($this->separator, $row));
+        $row = array_map(function ($value) {
+            return trim(str_replace('"', '', $value));
+        }, explode($this->separator, $row));
 
         if (count($this->keys) == 0) {
             return $row;
@@ -55,7 +57,7 @@ trait DataGovRoCompaniesParserTrait
             if (count($row) == 1) {
                 return [];
             } elseif (count($this->keys) < count($row)) {
-                $row = array_slice($row, 0, count($row));
+                $row = array_slice($row, 0, count($this->keys));
             } else {
                 var_dump($this->keys, $row);
                 die;

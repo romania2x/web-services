@@ -52,6 +52,12 @@ class Company
     private $stateHistory = [];
 
     /**
+     * @var array
+     * @Serializer\Type("array")
+     */
+    private $sources = [];
+
+    /**
      * @return mixed
      */
     public function getName()
@@ -203,6 +209,36 @@ class Company
     public function addStateHistory(int $timestamp, array $states): Company
     {
         $this->stateHistory[$timestamp] = $states;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getSources(): array
+    {
+        return $this->sources;
+    }
+
+    /**
+     * @param array $sources
+     * @return Company
+     */
+    public function setSources(array $sources): Company
+    {
+        $this->sources = $sources;
+        return $this;
+    }
+
+    /**
+     * @param string $source
+     * @return Company
+     */
+    public function addSource(string $source): Company
+    {
+        if (!in_array($source, $this->sources)) {
+            $this->sources[] = $source;
+        }
         return $this;
     }
 }

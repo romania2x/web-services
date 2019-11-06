@@ -3,9 +3,9 @@
 namespace App\Elasticsearch;
 
 use App\Elasticsearch\Model\Company;
+use App\Entity\OpenData\Source;
 use Elasticsearch\Client as ElasticSearchClient;
 use JMS\Serializer\Serializer;
-use JMS\Serializer\SerializerInterface;
 
 /**
  * Class Indexer
@@ -13,6 +13,7 @@ use JMS\Serializer\SerializerInterface;
  */
 class Indexer
 {
+    private const INDEX_DATA_GOV_RO_COMPANIES = 'data-gov-ro_companies';
     /**
      * @var ElasticSearchClient
      */
@@ -43,7 +44,7 @@ class Indexer
         try {
             $entry = $this->elasticSearchClient->get(
                 [
-                    'index' => 'data-gov-ro_companies',
+                    'index' => self::INDEX_DATA_GOV_RO_COMPANIES,
                     'id' => $id
                 ]
             );
@@ -55,8 +56,9 @@ class Indexer
 
     /**
      * @param Company $company
+     * @param Source $source
      */
-    public function indexCompany(Company $company)
+    public function indexCompany(Company $company, Source $source)
     {
         $existingCompany = $this->retrieveCompanyById($company->getNationalUniqueIdentification());
         if ($existingCompany) {
@@ -65,14 +67,17 @@ class Indexer
                 ->setCounty($company->getCounty())
                 ->setFullAddress($company->getFullAddress())
                 ->setEuropeanUniqueIdentification($company->getEuropeanUniqueIdentification());
+
             foreach ($company->getStateHistory() as $timestamp => $states) {
                 $existingCompany->addStateHistory($timestamp, $states);
             }
+
             $company = $existingCompany;
         }
+        $company->addSource($source->getUrl());
         $this->elasticSearchClient->index(
             [
-                'index' => 'data-gov-ro_companies',
+                'index' => self::INDEX_DATA_GOV_RO_COMPANIES,
                 'id' => $company->getNationalUniqueIdentification(),
                 'body' => $this->serializer->toArray($company)
             ]

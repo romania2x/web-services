@@ -77,10 +77,10 @@ class SyncCompaniesSubsetHandler extends AbstractMessageHandler
                 $companyBuilder->addData($key, $value, $date);
             }
 
-            $this->indexer->indexCompany($companyBuilder->getCompany());
+            $this->indexer->indexCompany($companyBuilder->getCompany(), $source);
             $progress->advance();
         }
-        $progress->finish();;
+        $progress->finish();
 
         fclose($localFileHandle);
     }
