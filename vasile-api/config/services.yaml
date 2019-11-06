@@ -44,3 +44,35 @@ services:
 
   App\Cache\OSMPropertiesCache:
     arguments: ['@cache']
+
+  App\Cache\CompanyStateCache:
+    arguments: ['@cache']
+
+  App\MessageHandler\Crawler\DataGovRo\Companies\LoadCompaniesSetHandler:
+    arguments:
+      $entityManager: '@neo4j.entity_manager.default'
+    calls:
+      - ['setMessageBus',['@message_bus']]
+  App\MessageHandler\Crawler\DataGovRo\Companies\DownloadCompaniesSubsetHandler:
+    arguments:
+      $entityManager: '@neo4j.entity_manager.default'
+      $projectDir: '%kernel.project_dir%'
+    calls:
+      - ['setMessageBus',['@message_bus']]
+
+  App\MessageHandler\Crawler\DataGovRo\Companies\SyncCompaniesSubsetHandler:
+    arguments:
+      $entityManager: '@neo4j.entity_manager.default'
+      $indexer: '@App\Elasticsearch\Indexer'
+      $projectDir: '%kernel.project_dir%'
+
+  App\MessageHandler\Crawler\DataGovRo\Companies\PreloadStateMapHandler:
+    arguments:
+      $entityManager: '@neo4j.entity_manager.default'
+      $companyStateCache: '@App\Cache\CompanyStateCache'
+      $projectDir: '%kernel.project_dir%'
+
+  App\Elasticsearch\Indexer:
+    arguments:
+      $serializer: "@jms_serializer.serializer"
+      $elasticSearchClient: '@Elasticsearch\Client'

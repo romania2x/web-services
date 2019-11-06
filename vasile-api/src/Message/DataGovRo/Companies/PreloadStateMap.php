@@ -1,0 +1,34 @@
+<?php
+
+namespace App\Message\DataGovRo\Companies;
+
+use App\Entity\OpenData\Source;
+
+/**
+ * Class PreloadStateMap
+ * @package App\Message\DataGovRo\Companies
+ */
+class PreloadStateMap
+{
+    /**
+     * @var string
+     */
+    private $sourceId;
+
+    /**
+     * DownloadCompaniesSubset constructor.
+     * @param Source $source
+     */
+    public function __construct(Source $source)
+    {
+        $this->sourceId = $source->getId();
+    }
+
+    /**
+     * @return string
+     */
+    public function getSourceId(): string
+    {
+        return $this->sourceId;
+    }
+}

@@ -37,6 +37,7 @@ services:
 
   public-api-php-fpm:
     build: infrastructure/fpm
+    privileged: true
     depends_on:
       - internal-postgis
       - internal-mongo
@@ -89,6 +90,7 @@ services:
       - ./var/neo4j/plugins:/plugins
     ports:
       - 7474:7474
+      - 7687:7687
   internal-rabbitmq:
     image: rabbitmq:3.7.5-management
     environment:
