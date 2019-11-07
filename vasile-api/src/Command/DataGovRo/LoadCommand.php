@@ -1,25 +1,24 @@
 <?php
 
-namespace App\Command\Companies;
+namespace App\Command\DataGovRo;
 
 use App\Command\AbstractCommand;
-use App\Message\DataGovRo\Companies\LoadCompaniesSet;
-use Symfony\Component\Console\Command\Command;
+use App\Message\DataGovRo\DataSetDetailsUpdate;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
- * Class LoadCompaniesCommand
- * @package App\Command\Companies
+ * Class LoadCommand
+ * @package App\Command\DataGovRo
  */
-class LoadCompaniesCommand extends AbstractCommand
+class LoadCommand extends AbstractCommand
 {
     /**
      * @var string
      */
-    protected static $defaultName = 'companies:load';
+    protected static $defaultName = 'data-gov-ro:load';
 
     /**
      * @var MessageBusInterface
@@ -41,7 +40,7 @@ class LoadCompaniesCommand extends AbstractCommand
      */
     protected function configure()
     {
-        $this->addArgument('source', InputArgument::REQUIRED, 'CSV with companies sets links');
+        $this->addArgument('source', InputArgument::REQUIRED, 'CSV with data.gov.ro\'s datasets links');
     }
 
 
@@ -50,13 +49,13 @@ class LoadCompaniesCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->log('Loading companies');
+        $this->log('Loading datasets');
 
         $sourceHandler = fopen($input->getArgument('source'), 'r');
 
         while ($row = fgetcsv($sourceHandler)) {
-            $this->log("Processing '{$row[0]}'");
-            $this->messageBus->dispatch(new LoadCompaniesSet($row[1]));
+            $this->log("Processing {$row[1]} => '{$row[0]}'");
+            $this->messageBus->dispatch(new DataSetDetailsUpdate($row[0], $row[1]));
         }
 
         $this->log('Done.');
