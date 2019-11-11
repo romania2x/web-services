@@ -14,7 +14,9 @@ use GraphAware\Neo4j\OGM\Common\Collection;
  */
 class Source
 {
-    const TAG_COMPANIES_DATA_GOV_RO = 'companies.data_gov_ro';
+    public const TYPE_DATA_GOV_RO_COMPANIES = 'data_gov_ro.companies';
+    public const TYPE_DATA_GOV_RO_SIRUTA = 'data_gov_ro.siruta';
+    public const TYPE_DATA_GOV_RO_POSTAL_CODES = 'data_gov_ro.postal_codes';
 
     /**
      * @var int
@@ -41,10 +43,10 @@ class Source
     private $url;
 
     /**
-     * @var array
-     * @Graph\Property(type="array")
+     * @var string
+     * @Graph\Property(type="string")
      */
-    private $tags = [];
+    private $type;
 
     /**
      * @var bool
@@ -53,13 +55,15 @@ class Source
     private $downloadable = false;
     /**
      * @var Source
-     * @Graph\Relationship(type="PARENT", direction="INCOMING", collection=false, mappedBy="children", targetEntity="Source")
+     * @Graph\Relationship(type="PARENT", direction="INCOMING", collection=false, mappedBy="children",
+     *                                    targetEntity="Source")
      */
     private $parent;
 
     /**
      * @var Source[]|Collection
-     * @Graph\Relationship(type="PARENT", direction="OUTGOING", collection=true, mappedBy="parent", targetEntity="Source")
+     * @Graph\Relationship(type="PARENT", direction="OUTGOING", collection=true, mappedBy="parent",
+     *                                    targetEntity="Source")
      */
     private $children;
 
@@ -170,20 +174,20 @@ class Source
     }
 
     /**
-     * @return array
+     * @return string
      */
-    public function getTags(): array
+    public function getType(): string
     {
-        return $this->tags;
+        return $this->type;
     }
 
     /**
-     * @param array $tags
+     * @param string $type
      * @return Source
      */
-    public function setTags(array $tags): Source
+    public function setType(string $type): Source
     {
-        $this->tags = $tags;
+        $this->type = $type;
         return $this;
     }
 

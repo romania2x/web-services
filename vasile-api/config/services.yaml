@@ -23,6 +23,7 @@ services:
   # controllers are imported separately to make sure services can be injected
   # as action arguments even if you don't extend any base controller class
   App\Controller\:
+    autowire: false
     resource: '../src/Controller'
     tags: ['controller.service_arguments']
 
@@ -42,37 +43,38 @@ services:
     factory: ['Symfony\Component\Cache\Adapter\RedisAdapter','createConnection']
     arguments: ['redis://internal-cache']
 
-  App\Cache\OSMPropertiesCache:
-    arguments: ['@cache']
-
-  App\Cache\CompanyStateCache:
-    arguments: ['@cache']
-
-  App\MessageHandler\Crawler\DataGovRo\Companies\LoadCompaniesSetHandler:
-    arguments:
-      $entityManager: '@neo4j.entity_manager.default'
-    calls:
-      - ['setMessageBus',['@message_bus']]
-  App\MessageHandler\Crawler\DataGovRo\Companies\DownloadCompaniesSubsetHandler:
-    arguments:
-      $entityManager: '@neo4j.entity_manager.default'
-      $projectDir: '%kernel.project_dir%'
-    calls:
-      - ['setMessageBus',['@message_bus']]
-
-  App\MessageHandler\Crawler\DataGovRo\Companies\SyncCompaniesSubsetHandler:
-    arguments:
-      $entityManager: '@neo4j.entity_manager.default'
-      $indexer: '@App\Elasticsearch\Indexer'
-      $projectDir: '%kernel.project_dir%'
-
-  App\MessageHandler\Crawler\DataGovRo\Companies\PreloadStateMapHandler:
-    arguments:
-      $entityManager: '@neo4j.entity_manager.default'
-      $companyStateCache: '@App\Cache\CompanyStateCache'
-      $projectDir: '%kernel.project_dir%'
-
   App\Elasticsearch\Indexer:
     arguments:
       $serializer: "@jms_serializer.serializer"
       $elasticSearchClient: '@Elasticsearch\Client'
+
+  App\MessageHandler\Crawler\DataGovRo\DataSetDetailsUpdateHandler:
+    calls:
+      - ['setMessageBus',['@message_bus']]
+      - ['setGraphEntityManager',['@neo4j.entity_manager.default']]
+    arguments:
+      $sourceRepository: '@App\Repository\Entity\OpenData\SourceRepository'
+  App\MessageHandler\Crawler\DataGovRo\DataSetDownloadHandler:
+    calls:
+      - ['setProjectDir',['%kernel.project_dir%']]
+      - ['setMessageBus',['@message_bus']]
+      - ['setGraphEntityManager',['@neo4j.entity_manager.default']]
+  App\MessageHandler\Crawler\DataGovRo\DataSetProcessorHandler:
+    calls:
+      - ['setMessageBus',['@message_bus']]
+      - ['setGraphEntityManager',['@neo4j.entity_manager.default']]
+    arguments:
+      $sourceRepository: '@App\Repository\Entity\OpenData\SourceRepository'
+  App\MessageHandler\Crawler\DataGovRo\Siruta\ProcessSirutaHandler:
+    calls:
+      - ['setProjectDir',['%kernel.project_dir%']]
+      - ['setMessageBus',['@message_bus']]
+      - ['setGraphEntityManager',['@neo4j.entity_manager.default']]
+    arguments:
+      $zoneRepository: '@App\Repository\Entity\Administrative\ZoneRepository'
+      $countyRepository: '@App\Repository\Entity\Administrative\CountyRepository'
+      $administrativeUnitRepository: '@App\Repository\Entity\Administrative\AdministrativeUnitRepository'
+
+  App\Repository\Entity\Administrative\AdministrativeUnitRepository:
+    calls:
+      - ['setCache',['@cache']]

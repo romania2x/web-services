@@ -9,10 +9,7 @@ use Symfony\Component\Process\Process;
 trait DataGovRoCompaniesParserTrait
 {
     protected $locale = 'ro_RO.utf8';
-    /**
-     * @var string
-     */
-    protected $downloadCacheDir;
+
 
     /**
      * @var string
@@ -65,15 +62,6 @@ trait DataGovRoCompaniesParserTrait
         }
 
         return array_combine($this->keys, $row);
-    }
-
-    /**
-     * @param Source $source
-     * @return string
-     */
-    protected function generateLocalFilePath(Source $source)
-    {
-        return $this->downloadCacheDir . 'resources_' . md5($source->getUrl());
     }
 
     /**
