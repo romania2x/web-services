@@ -31,6 +31,12 @@ class AdministrativeUnit
     private $siruta;
 
     /**
+     * @var array
+     * @OGM\Property(type="array")
+     */
+    private $postalCodes = [];
+
+    /**
      * @var int
      * @OGM\Property(type="int")
      */
@@ -128,6 +134,39 @@ class AdministrativeUnit
     public function setSiruta(int $siruta): AdministrativeUnit
     {
         $this->siruta = $siruta;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPostalCodes(): array
+    {
+        return $this->postalCodes;
+    }
+
+    /**
+     * @param array $postalCodes
+     * @return AdministrativeUnit
+     */
+    public function setPostalCodes(array $postalCodes): AdministrativeUnit
+    {
+        $this->postalCodes = $postalCodes;
+        return $this;
+    }
+
+    /**
+     * @param string $postalCode
+     * @return AdministrativeUnit
+     */
+    public function addPostalCode(string $postalCode): AdministrativeUnit
+    {
+        if (is_null($this->postalCodes)) {
+            $this->postalCodes = [];
+        }
+        if (!in_array($postalCode, $this->postalCodes)) {
+            $this->postalCodes[] = $postalCode;
+        }
         return $this;
     }
 

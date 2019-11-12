@@ -27,6 +27,7 @@ class ProcessSirutaHandler extends AbstractMessageHandler
     use FileSystemAwareTrait;
 
     private const ENCODING = 'ISO-8859-2';
+    private const SEPARATOR = ';';
 
     /**
      * @var ZoneRepository
@@ -79,14 +80,16 @@ class ProcessSirutaHandler extends AbstractMessageHandler
             return $child->getTitle() == 'siruta-zone.csv';
         })->first();
 
-        $progress = $this->createProgressBar($this->getTotalNoLines($zonesSirutaSource) + 1);
+        $progress = $this->createProgressBar($this->getNoLinesFromSource($zonesSirutaSource) + 1);
 
-        $this->processSiruta(
+        $this->processCSVFromSource(
             $zonesSirutaSource,
             function (array $row) use ($progress) {
                 $this->zoneRepository->createOrUpdate(ZoneBuilder::fromSiruta($row));
                 $progress->advance();
-            }
+            },
+            self::SEPARATOR,
+            self::ENCODING
         );
         $progress->finish();
         $this->output->write(PHP_EOL);
@@ -104,9 +107,9 @@ class ProcessSirutaHandler extends AbstractMessageHandler
             return $child->getTitle() == 'siruta-judete.csv';
         })->first();
 
-        $progress = $this->createProgressBar($this->getTotalNoLines($countiesSirutaSource) + 1);
+        $progress = $this->createProgressBar($this->getNoLinesFromSource($countiesSirutaSource) + 1);
 
-        $this->processSiruta(
+        $this->processCSVFromSource(
             $countiesSirutaSource,
             function (array $row) use ($progress) {
                 $this->countyRepository->createOrUpdate(
@@ -114,7 +117,9 @@ class ProcessSirutaHandler extends AbstractMessageHandler
                     $this->zoneRepository->findOneBy(['nationalId' => intval($row['ZONA'])])
                 );
                 $progress->advance();
-            }
+            },
+            self::SEPARATOR,
+            self::ENCODING
         );
         $progress->finish();
         $this->output->write(PHP_EOL);
@@ -131,9 +136,9 @@ class ProcessSirutaHandler extends AbstractMessageHandler
             return $child->getTitle() == 'siruta.csv';
         })->first();
 
-        $progress = $this->createProgressBar($this->getTotalNoLines($sirutaSource) + 1);
+        $progress = $this->createProgressBar($this->getNoLinesFromSource($sirutaSource) + 1);
 
-        $this->processSiruta(
+        $this->processCSVFromSource(
             $sirutaSource,
             function (array $row) use ($progress) {
                 $administrativeUnit = $this->administrativeUnitRepository->createOrUpdate(AdministrativeUnitBuilder::fromSiruta($row));
@@ -155,51 +160,11 @@ class ProcessSirutaHandler extends AbstractMessageHandler
                 }
                 $this->graphEntityManager->clear();
                 $progress->advance();
-            }
+            },
+            self::SEPARATOR,
+            self::ENCODING
         );
         $progress->finish();
         $this->output->write(PHP_EOL);
-    }
-
-    /**
-     * @param Source        $source
-     * @param callable|null $rowCallback
-     */
-    private function processSiruta(Source $source, $rowCallback = null)
-    {
-        $fileHandle = fopen($this->generateLocalFilePath($source), 'r');
-        $keys       = [];
-        while ($row = fgets($fileHandle)) {
-            $row = LanguageHelpers::asciiTranslit($row, self::ENCODING);
-            $row = str_getcsv($row, ";");
-            if (count($keys) == 0) {
-                $keys = $row;
-                continue;
-            }
-            $row = array_map('trim', $row);
-            $row = array_combine($keys, $row);
-            if ($rowCallback) {
-                $rowCallback($row);
-            }
-        }
-        fclose($fileHandle);
-    }
-
-    /**
-     * @param Source $source
-     * @return int
-     */
-    private function getTotalNoLines(Source $source): int
-    {
-        $count  = 0;
-        $handle = fopen($this->generateLocalFilePath($source), "r");
-        while (!feof($handle)) {
-            fgets($handle);
-            $count++;
-        }
-
-        fclose($handle);
-
-        return $count;
     }
 }

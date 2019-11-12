@@ -21,7 +21,7 @@ RUN apt -y install \
     php7.3-pdo-pgsql \
     php7.3-dev \
     php7.3-redis \
-    libgeos-dev osm2pgsql unzip locales locales-all
+    libgeos-dev osm2pgsql unzip locales locales-all gnumeric
 
 RUN echo "$(curl -sS https://composer.github.io/installer.sig) -" > composer-setup.php.sig \
         && curl -sS https://getcomposer.org/installer | tee composer-setup.php | sha384sum -c composer-setup.php.sig \

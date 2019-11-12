@@ -75,6 +75,13 @@ services:
       $countyRepository: '@App\Repository\Entity\Administrative\CountyRepository'
       $administrativeUnitRepository: '@App\Repository\Entity\Administrative\AdministrativeUnitRepository'
 
+  App\MessageHandler\Crawler\DataGovRo\PostalCodes\ProcessPostalCodesHandler:
+    calls:
+      - ['setProjectDir',['%kernel.project_dir%']]
+      - ['setMessageBus',['@message_bus']]
+      - ['setGraphEntityManager',['@neo4j.entity_manager.default']]
+
+
   App\Repository\Entity\Administrative\AdministrativeUnitRepository:
     calls:
       - ['setCache',['@cache']]
