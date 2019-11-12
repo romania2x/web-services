@@ -12,7 +12,10 @@ use Facebook\WebDriver\Exception\NoSuchElementException;
 use Facebook\WebDriver\Exception\TimeOutException;
 use Facebook\WebDriver\Remote\RemoteWebElement;
 use Facebook\WebDriver\WebDriverBy;
+use GuzzleHttp\RequestOptions;
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Panther\Client;
+use GuzzleHttp\Client as HttpClient;
 
 /**
  * Class DataSetDetailsUpdateHandler
@@ -24,6 +27,11 @@ class DataSetDetailsUpdateHandler extends AbstractMessageHandler
      * @var Client
      */
     private $crawlerClient;
+
+    /**
+     * @var HttpClient
+     */
+    private $httpClient;
 
     /**
      * @var SourceRepository
@@ -39,6 +47,13 @@ class DataSetDetailsUpdateHandler extends AbstractMessageHandler
         parent::__construct();
         $this->crawlerClient    = Client::createChromeClient();
         $this->sourceRepository = $sourceRepository;
+        $this->httpClient       = new HttpClient(
+            [
+                RequestOptions::HEADERS => [
+                    'User-Agent' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36'
+                ]
+            ]
+        );
     }
 
 
@@ -52,8 +67,10 @@ class DataSetDetailsUpdateHandler extends AbstractMessageHandler
     {
         $this->log("Downloading details for {$message->getUrl()}");
 
-        $this->crawlerClient->request('GET', $message->getUrl());
-        $crawler = $this->crawlerClient->waitFor('.module-content');
+        $crawler = new Crawler($this->httpClient->get($message->getUrl())->getBody()->getContents());
+
+//        $this->crawlerClient->request('GET', $message->getUrl());
+//        $crawler = $this->crawlerClient->waitFor('.module-content');
 
         $set = [
             'title'       => trim($crawler->filter('.module-content h1')->text()),
@@ -68,12 +85,15 @@ class DataSetDetailsUpdateHandler extends AbstractMessageHandler
             $set['description']
         );
 
-        /** @var RemoteWebElement $resourceItem */
-        foreach ($crawler->filter('.resource-list .resource-item') as $resourceItem) {
+        /** @var \DOMElement $resourceItem */
+        foreach ($crawler->filter('.resource-list .resource-item') as $index => $resourceItem) {
+            $child  = $index + 1;
+            $parent = ".resource-list .resource-item:nth-child({$child})";
+
             $resource = $this->sourceRepository->createOrUpdate(
-                trim($resourceItem->findElement(WebDriverBy::cssSelector('ul.dropdown-menu > li:nth-child(2) > a'))->getAttribute('href')),
+                trim($crawler->filter($parent . " ul.dropdown-menu > li:nth-child(2) > a")->first()->attr('href')),
                 $message->getType(),
-                trim($resourceItem->findElement(WebDriverBy::cssSelector('.heading'))->getAttribute('title')),
+                trim($crawler->filter($parent . ' .heading')->first()->attr('title')),
                 null,
                 true,
                 $dataSetSource

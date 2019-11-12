@@ -38,13 +38,13 @@ class RefreshCommand extends AbstractCommand
 
     /**
      * ProcessCommand constructor.
-     * @param MessageBusInterface    $messageBus
-     * @param EntityManagerInterface $entityManager
+     * @param MessageBusInterface $messageBus
+     * @param SourceRepository    $sourceRepository
      */
-    public function __construct(MessageBusInterface $messageBus, EntityManagerInterface $entityManager)
+    public function __construct(MessageBusInterface $messageBus, SourceRepository $sourceRepository)
     {
         $this->messageBus       = $messageBus;
-        $this->sourceRepository = $entityManager->getRepository(Source::class);
+        $this->sourceRepository = $sourceRepository;
         parent::__construct();
     }
 

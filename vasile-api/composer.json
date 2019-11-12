@@ -8,6 +8,8 @@
         "ext-iconv": "*",
         "ext-json": "*",
         "ext-redis": "*",
+        "ext-dom": "*",
+
         "alcaeus/mongo-php-adapter": "^1.1",
         "creof/doctrine2-spatial": "dev-master",
         "doctrine/mongodb-odm-bundle": "^3.5",
