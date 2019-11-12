@@ -32,29 +32,7 @@ abstract class LanguageHelpers
             self::$locale = $locale;
             setlocale(LC_ALL, self::$locale);
         }
-        mb_convert_encoding($string,'UTF-8',$sourceEncoding);
-        $string = self::convertSmartQuotes($string);
+        mb_convert_encoding($string, 'UTF-8', $sourceEncoding);
         return iconv($sourceEncoding, 'ASCII//TRANSLIT', $string);
-    }
-
-    public static function convertSmartQuotes(string $string): string
-    {
-        $search = array(
-            chr(145),
-            chr(146),
-            chr(147),
-            chr(148),
-            chr(151)
-        );
-
-        $replace = array(
-            "'",
-            "'",
-            '"',
-            '"',
-            '-'
-        );
-
-        return str_replace($search, $replace, $string);
     }
 }
