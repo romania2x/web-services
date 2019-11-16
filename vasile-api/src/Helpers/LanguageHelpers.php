@@ -46,11 +46,9 @@ abstract class LanguageHelpers
      */
     public static function slugify($text)
     {
+        $text = self::asciiTranslit($text);
         // replace non letter or digits by -
         $text = preg_replace('~[^\pL\d]+~u', '-', $text);
-
-        // transliterate
-        $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
 
         // remove unwanted characters
         $text = preg_replace('~[^-\w]+~', '', $text);
@@ -65,7 +63,7 @@ abstract class LanguageHelpers
         $text = strtolower($text);
 
         if (empty($text)) {
-            return 'n-a';
+            return 'N/A';
         }
 
         return $text;

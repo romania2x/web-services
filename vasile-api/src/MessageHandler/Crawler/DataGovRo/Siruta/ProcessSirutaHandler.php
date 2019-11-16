@@ -64,7 +64,7 @@ class ProcessSirutaHandler extends AbstractMessageHandler
      */
     public function __invoke(ProcessSiruta $message)
     {
-
+        setlocale(LC_CTYPE, 'ro_RO');
         $this->processZones($message->getSource());
         $this->processCounties($message->getSource());
         $this->processAdministrativeUnits($message->getSource());
