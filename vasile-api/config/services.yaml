@@ -70,10 +70,6 @@ services:
       - ['setProjectDir',['%kernel.project_dir%']]
       - ['setMessageBus',['@message_bus']]
       - ['setGraphEntityManager',['@neo4j.entity_manager.default']]
-    arguments:
-      $zoneRepository: '@App\Repository\Entity\Administrative\ZoneRepository'
-      $countyRepository: '@App\Repository\Entity\Administrative\CountyRepository'
-      $administrativeUnitRepository: '@App\Repository\Entity\Administrative\AdministrativeUnitRepository'
 
   App\MessageHandler\Crawler\DataGovRo\PostalCodes\ProcessPostalCodesHandler:
     calls:
@@ -88,6 +84,32 @@ services:
       - ['setMessageBus',['@message_bus']]
       - ['setGraphEntityManager',['@neo4j.entity_manager.default']]
       - ['setSerializer',['@jms_serializer.serializer']]
+
+  App\MessageHandler\Crawler\DataGovRo\Siruta\LoadZonesHandler:
+    arguments:
+      $zoneRepository: '@App\Repository\Entity\Administrative\ZoneRepository'
+    calls:
+      - ['setProjectDir',['%kernel.project_dir%']]
+      - ['setMessageBus',['@message_bus']]
+      - ['setGraphEntityManager',['@neo4j.entity_manager.default']]
+
+  App\MessageHandler\Crawler\DataGovRo\Siruta\LoadCountiesHandler:
+    arguments:
+      $zoneRepository: '@App\Repository\Entity\Administrative\ZoneRepository'
+      $countyRepository: '@App\Repository\Entity\Administrative\CountyRepository'
+    calls:
+      - ['setProjectDir',['%kernel.project_dir%']]
+      - ['setMessageBus',['@message_bus']]
+      - ['setGraphEntityManager',['@neo4j.entity_manager.default']]
+
+  App\MessageHandler\Crawler\DataGovRo\Siruta\LoadAdministrativeUnitsHandler:
+    arguments:
+      $administrativeUnitRepository: '@App\Repository\Entity\Administrative\AdministrativeUnitRepository'
+      $countyRepository: '@App\Repository\Entity\Administrative\CountyRepository'
+    calls:
+      - ['setProjectDir',['%kernel.project_dir%']]
+      - ['setMessageBus',['@message_bus']]
+      - ['setGraphEntityManager',['@neo4j.entity_manager.default']]
 
   App\Repository\Entity\Administrative\AdministrativeUnitRepository:
     calls:

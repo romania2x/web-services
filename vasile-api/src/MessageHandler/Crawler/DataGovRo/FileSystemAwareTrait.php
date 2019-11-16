@@ -31,7 +31,7 @@ trait FileSystemAwareTrait
 
     /**
      * @param Source      $source
-     * @param null        $rowCallback
+     * @param callable    $rowCallback
      * @param string      $separator
      * @param string|null $encoding
      */

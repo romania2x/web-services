@@ -23,6 +23,11 @@ abstract class AbstractMessageHandler implements MessageHandlerInterface
     protected $output;
 
     /**
+     * @var ProgressBar
+     */
+    protected $progressBar;
+
+    /**
      * @var MessageBusInterface
      */
     protected $messageBus;
@@ -36,6 +41,7 @@ abstract class AbstractMessageHandler implements MessageHandlerInterface
      * @var SerializerInterface
      */
     protected $serializer;
+
 
     /**
      * AbstractMessageHandler constructor.
@@ -92,8 +98,13 @@ abstract class AbstractMessageHandler implements MessageHandlerInterface
 
     protected function createProgressBar(int $total)
     {
-        $progress = new ProgressBar($this->output, $total);
-        $progress->setFormat(' %current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s% %memory:6s%');
-        return $progress;
+        $this->progressBar = new ProgressBar($this->output, $total);
+        $this->progressBar->setFormat(' %current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s% %memory:6s%');
+    }
+
+    protected function finishProgressBar()
+    {
+        $this->progressBar->finish();
+        $this->output->write(PHP_EOL);
     }
 }
