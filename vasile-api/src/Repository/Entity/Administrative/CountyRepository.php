@@ -35,6 +35,7 @@ class CountyRepository extends AbstractOGMRepository
             $existingCounty
                 ->setMnemonic($county->getMnemonic())
                 ->setName($county->getName())
+                ->setSlug($county->getSlug())
                 ->setSortingIndex($county->getSortingIndex());
             $county = $existingCounty;
         }

@@ -85,3 +85,7 @@ services:
   App\Repository\Entity\Administrative\AdministrativeUnitRepository:
     calls:
       - ['setCache',['@cache']]
+
+  App\Command\DataGovRo\PruneCommand:
+    arguments:
+      $cache: '@cache'

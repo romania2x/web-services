@@ -26,9 +26,12 @@ class ZoneRepository extends AbstractOGMRepository
      */
     public function createOrUpdate(Zone $zone): Zone
     {
+        /** @var Zone $existingZone */
         if ($existingZone = $this->findOneBy(['nationalId' => $zone->getNationalId()])) {
             $existingZone
                 ->setName($zone->getName())
+                ->setSlug($zone->getSlug())
+                ->setNationalId($zone->getNationalId())
                 ->setSiruta($zone->getSiruta());
             $zone = $existingZone;
         }

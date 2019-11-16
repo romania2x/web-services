@@ -33,6 +33,12 @@ class County
      * @var string
      * @OGM\Property(type="string")
      */
+    private $slug;
+
+    /**
+     * @var string
+     * @OGM\Property(type="string")
+     */
     private $mnemonic;
 
     /**
@@ -105,6 +111,24 @@ class County
     public function setName(string $name): County
     {
         $this->name = $name;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSlug(): string
+    {
+        return $this->slug;
+    }
+
+    /**
+     * @param string $slug
+     * @return County
+     */
+    public function setSlug(string $slug): County
+    {
+        $this->slug = $slug;
         return $this;
     }
 

@@ -29,6 +29,13 @@ class Zone
      * @OGM\Property(type="string")
      */
     private $name;
+
+    /**
+     * @var string
+     * @OGM\Property(type="string")
+     */
+    private $slug;
+
     /**
      * @var int
      * @OGM\Property(type="int")
@@ -101,6 +108,24 @@ class Zone
     public function setName(string $name): Zone
     {
         $this->name = $name;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSlug(): string
+    {
+        return $this->slug;
+    }
+
+    /**
+     * @param string $slug
+     * @return Zone
+     */
+    public function setSlug(string $slug): Zone
+    {
+        $this->slug = $slug;
         return $this;
     }
 

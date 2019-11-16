@@ -64,6 +64,7 @@ class ProcessSirutaHandler extends AbstractMessageHandler
      */
     public function __invoke(ProcessSiruta $message)
     {
+
         $this->processZones($message->getSource());
         $this->processCounties($message->getSource());
         $this->processAdministrativeUnits($message->getSource());
@@ -146,6 +147,7 @@ class ProcessSirutaHandler extends AbstractMessageHandler
                 if ($administrativeUnit->getType() == AdministrativeUnitType::COUNTY) {
                     /** @var County $county */
                     $county = $this->countyRepository->findOneBy(['nationalId' => intval($row['JUD'])]);
+
                     $county->setAdministrativeUnit($administrativeUnit);
                     $this->countyRepository->persist($county, true);
                 } else {

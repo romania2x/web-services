@@ -37,11 +37,13 @@ class AdministrativeUnitRepository extends AbstractOGMRepository
         if ($existingUnit = $this->getCachedBySiruta($administrativeUnit->getSiruta())) {
             $existingUnit
                 ->setName($administrativeUnit->getName())
+                ->setSlug($administrativeUnit->getSlug())
+                ->setSiruta($administrativeUnit->getSiruta())
+                ->setPostalCodes($administrativeUnit->getPostalCodes())
                 ->setType($administrativeUnit->getType());
 
             $administrativeUnit = $existingUnit;
         }
-
         $this->persist($administrativeUnit, true);
 
         return $administrativeUnit;
@@ -63,7 +65,6 @@ class AdministrativeUnitRepository extends AbstractOGMRepository
     {
         $cacheKey    = implode('.', ['administrative_unit.', $siruta]);
         $cachedEntry = $this->cache->get($cacheKey);
-
         if ($cachedEntry) {
             return $this->find($cachedEntry);
         }

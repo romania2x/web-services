@@ -26,13 +26,48 @@ abstract class LanguageHelpers
      * @param string $locale
      * @return false|string
      */
-    public static function asciiTranslit(string $string, string $sourceEncoding, string $locale = 'ro_RO.utf8')
+    public static function asciiTranslit(string $string)
     {
-        if ($locale != self::$locale) {
-            self::$locale = $locale;
-            setlocale(LC_ALL, self::$locale);
+        return iconv('UTF-8', 'ASCII//TRANSLIT', $string);
+    }
+
+    /**
+     * @param string $name
+     * @return string
+     */
+    public static function normalizeName(string $name)
+    {
+        return mb_convert_case(mb_strtolower($name), MB_CASE_TITLE, 'UTF-8');
+    }
+
+    /**
+     * @param string $string
+     * @return string
+     */
+    public static function slugify($text)
+    {
+        // replace non letter or digits by -
+        $text = preg_replace('~[^\pL\d]+~u', '-', $text);
+
+        // transliterate
+        $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
+
+        // remove unwanted characters
+        $text = preg_replace('~[^-\w]+~', '', $text);
+
+        // trim
+        $text = trim($text, '-');
+
+        // remove duplicate -
+        $text = preg_replace('~-+~', '-', $text);
+
+        // lowercase
+        $text = strtolower($text);
+
+        if (empty($text)) {
+            return 'n-a';
         }
-        mb_convert_encoding($string, 'UTF-8', $sourceEncoding);
-        return iconv($sourceEncoding, 'ASCII//TRANSLIT', $string);
+
+        return $text;
     }
 }

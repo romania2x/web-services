@@ -43,8 +43,8 @@ class DataSetProcessorHandler extends AbstractMessageHandler
                 $this->messageBus->dispatch(new ProcessSiruta($source));
                 break;
             case Source::TYPE_DATA_GOV_RO_POSTAL_CODES:
-                $this->messageBus->dispatch(new ProcessPostalCodes($source));
-                break;
+//                $this->messageBus->dispatch(new ProcessPostalCodes($source));
+//                break;
             default:
                 $this->log("No processor for {$source->getType()}");
         }

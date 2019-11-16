@@ -3,6 +3,7 @@
 namespace App\ModelCompositeBuilder\Administrative;
 
 use App\Entity\Administrative\County;
+use App\Helpers\LanguageHelpers;
 
 /**
  * Class CountyBuilder
@@ -43,7 +44,8 @@ class CountyBuilder
                 $this->county->setNationalId($value);
                 break;
             case 'DENJ':
-                $this->county->setName($value);
+                $this->county->setName(LanguageHelpers::normalizeName($value));
+                $this->county->setSlug(LanguageHelpers::slugify($value));
                 break;
             case 'MNEMONIC':
                 $this->county->setMnemonic($value);
@@ -60,7 +62,7 @@ class CountyBuilder
     }
 
     /**
-     * @param array $row
+     * @param array  $row
      * @return County
      */
     public static function fromSiruta(array $row): County

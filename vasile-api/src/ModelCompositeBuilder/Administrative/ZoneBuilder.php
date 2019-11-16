@@ -3,6 +3,7 @@
 namespace App\ModelCompositeBuilder\Administrative;
 
 use App\Entity\Administrative\Zone;
+use App\Helpers\LanguageHelpers;
 
 /**
  * Class ZoneBuilder
@@ -38,7 +39,8 @@ class ZoneBuilder
                 $this->zone->setSiruta(intval($value));
                 break;
             case 'DENZONA':
-                $this->zone->setName($value);
+                $this->zone->setName(LanguageHelpers::normalizeName($value));
+                $this->zone->setSlug(LanguageHelpers::slugify($value));
                 break;
             default:
                 throw new \RuntimeException("Unknown field $key with value $value");
@@ -54,7 +56,7 @@ class ZoneBuilder
     }
 
     /**
-     * @param array $row
+     * @param array  $row
      * @return Zone
      */
     public static function fromSiruta(array $row): Zone

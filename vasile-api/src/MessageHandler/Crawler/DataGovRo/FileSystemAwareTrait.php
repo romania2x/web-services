@@ -59,14 +59,15 @@ trait FileSystemAwareTrait
         $fileHandle = fopen($path, 'r');
         $keys       = [];
         while ($row = fgets($fileHandle)) {
+            if (strtolower($encoding) != 'utf-8') {
+                $row = mb_convert_encoding($row, 'utf-8', $encoding);
+            }
             $row = str_getcsv($row, $separator);
             if (count($keys) == 0) {
                 $keys = $row;
                 continue;
             }
-            $row = array_map(function ($value) use ($encoding) {
-                return trim(LanguageHelpers::asciiTranslit($value, $encoding));
-            }, $row);
+            $row = array_map('trim', $row);
             if (count($keys) != count($row)) {
                 print_r($keys);
                 print_r($row);

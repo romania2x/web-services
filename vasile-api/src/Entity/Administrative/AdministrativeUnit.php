@@ -10,7 +10,7 @@ use GraphAware\Neo4j\OGM\Common\Collection;
 /**
  * Class AdministrativeUnit
  * @package App\Entity\Administrative
- * @OGM\Node(label="AdministrativeUnit", repository="App\Repository\Entity\Administrative\AdministrativeUnitRepository")
+ * @OGM\Node(label="AdministrativeUnit")
  */
 class AdministrativeUnit
 {
@@ -25,6 +25,11 @@ class AdministrativeUnit
      */
     private $name;
     /**
+     * @var string
+     * @OGM\Property(type="string")
+     */
+    private $slug;
+    /**
      * @var int
      * @OGM\Property(type="int")
      */
@@ -34,7 +39,7 @@ class AdministrativeUnit
      * @var array
      * @OGM\Property(type="array")
      */
-    private $postalCodes = [];
+    private $postalCodes;
 
     /**
      * @var int
@@ -120,6 +125,24 @@ class AdministrativeUnit
     }
 
     /**
+     * @return string
+     */
+    public function getSlug(): string
+    {
+        return $this->slug;
+    }
+
+    /**
+     * @param string $slug
+     * @return AdministrativeUnit
+     */
+    public function setSlug(string $slug): AdministrativeUnit
+    {
+        $this->slug = $slug;
+        return $this;
+    }
+
+    /**
      * @return int
      */
     public function getSiruta(): int
@@ -140,7 +163,7 @@ class AdministrativeUnit
     /**
      * @return array
      */
-    public function getPostalCodes(): array
+    public function getPostalCodes(): ?array
     {
         return $this->postalCodes;
     }
@@ -149,9 +172,11 @@ class AdministrativeUnit
      * @param array $postalCodes
      * @return AdministrativeUnit
      */
-    public function setPostalCodes(array $postalCodes): AdministrativeUnit
+    public function setPostalCodes(?array $postalCodes): AdministrativeUnit
     {
-        $this->postalCodes = $postalCodes;
+        if ($postalCodes) {
+            $this->postalCodes = array_values($postalCodes);
+        }
         return $this;
     }
 

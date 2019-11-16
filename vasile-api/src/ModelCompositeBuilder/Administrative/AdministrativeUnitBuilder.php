@@ -3,6 +3,7 @@
 namespace App\ModelCompositeBuilder\Administrative;
 
 use App\Entity\Administrative\AdministrativeUnit;
+use App\Helpers\LanguageHelpers;
 
 /**
  * Class AdministrativeUnitBuilder
@@ -40,7 +41,8 @@ class AdministrativeUnitBuilder
     {
         switch ($key) {
             case 'DENLOC':
-                $this->administrativeUnit->setName($value);
+                $this->administrativeUnit->setName(LanguageHelpers::normalizeName($value));
+                $this->administrativeUnit->setSlug(LanguageHelpers::slugify($value));
                 break;
             case 'SIRUTA':
                 $this->administrativeUnit->setSiruta(intval($value));
@@ -50,7 +52,7 @@ class AdministrativeUnitBuilder
                 break;
             default:
                 continue;
-                throw new \RuntimeException("Unknown field $key with value $value");
+//                throw new \RuntimeException("Unknown field $key with value $value");
         }
     }
 

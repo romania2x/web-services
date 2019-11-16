@@ -26,14 +26,16 @@ abstract class AbstractOGMRepository extends BaseRepository
     /**
      * @param      $entity
      * @param bool $flush
+     * @return $this
      * @throws \Exception
      */
-    public function persist($entity, bool $flush = false)
+    public function persist($entity, $flush = false): self
     {
         $this->entityManager->persist($entity);
         if ($flush) {
             $this->entityManager->flush();
         }
+        return $this;
     }
 
     public function flush()
