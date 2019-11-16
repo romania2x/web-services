@@ -33,10 +33,10 @@ class CountyRepository extends AbstractOGMRepository
         /** @var County $existingCounty */
         if ($existingCounty = $this->findOneBy(['nationalId' => $county->getNationalId()])) {
             $existingCounty
-                ->setMnemonic($county->getMnemonic())
-                ->setName($county->getName())
-                ->setSlug($county->getSlug())
-                ->setSortingIndex($county->getSortingIndex());
+                ->setMnemonic($county->getMnemonic() ?? $existingCounty->getMnemonic())
+                ->setName($county->getName() ?? $existingCounty->getName())
+                ->setSlug($county->getSlug() ?? $existingCounty->getSlug())
+                ->setSortingIndex($county->getSortingIndex() ?? $existingCounty->getSortingIndex());
             $county = $existingCounty;
         }
 

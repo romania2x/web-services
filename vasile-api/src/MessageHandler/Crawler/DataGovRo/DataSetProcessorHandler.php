@@ -4,8 +4,8 @@ namespace App\MessageHandler\Crawler\DataGovRo;
 
 use App\Entity\OpenData\Source;
 use App\Message\DataGovRo\DataSetProcess;
-use App\Message\DataGovRo\PostalCodes\ProcessPostalCodes;
 use App\Message\DataGovRo\Siruta\ProcessSiruta;
+use App\Message\DataGovRo\Streets\ProcessStreets;
 use App\MessageHandler\AbstractMessageHandler;
 use App\Repository\Entity\OpenData\SourceRepository;
 
@@ -41,6 +41,9 @@ class DataSetProcessorHandler extends AbstractMessageHandler
         switch ($source->getType()) {
             case Source::TYPE_DATA_GOV_RO_SIRUTA:
                 $this->messageBus->dispatch(new ProcessSiruta($source));
+                break;
+            case Source::TYPE_DATA_GOV_RO_STREETS:
+                $this->messageBus->dispatch(new ProcessStreets($source));
                 break;
             case Source::TYPE_DATA_GOV_RO_POSTAL_CODES:
 //                $this->messageBus->dispatch(new ProcessPostalCodes($source));

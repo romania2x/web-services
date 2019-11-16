@@ -43,6 +43,8 @@ class PruneCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->entityManager->getDatabaseDriver()->run("match (w:Way)-[rel]-(b) delete rel");
+        $this->entityManager->getDatabaseDriver()->run("match (w:Way) delete w");
         $this->entityManager->getDatabaseDriver()->run("match (a:AdministrativeUnit)-[rel]-(b) delete rel");
         $this->entityManager->getDatabaseDriver()->run("match (a:AdministrativeUnit) delete  a");
         $this->entityManager->getDatabaseDriver()->run("match (c:County)-[rel]-(b) delete rel");

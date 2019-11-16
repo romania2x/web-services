@@ -36,11 +36,12 @@ class AdministrativeUnitRepository extends AbstractOGMRepository
         /** @var AdministrativeUnit $existingUnit */
         if ($existingUnit = $this->getCachedBySiruta($administrativeUnit->getSiruta())) {
             $existingUnit
-                ->setName($administrativeUnit->getName())
-                ->setSlug($administrativeUnit->getSlug())
-                ->setSiruta($administrativeUnit->getSiruta())
-                ->setPostalCodes($administrativeUnit->getPostalCodes())
-                ->setType($administrativeUnit->getType());
+                ->setName($administrativeUnit->getName() ?? $existingUnit->getName())
+                ->setTitle($administrativeUnit->getTitle() ?? $existingUnit->getTitle())
+                ->setSlug($administrativeUnit->getSlug() ?? $existingUnit->getSlug())
+                ->setSiruta($administrativeUnit->getSiruta() ?? $existingUnit->getSiruta())
+                ->setPostalCodes($administrativeUnit->getPostalCodes() ?? $existingUnit->getPostalCodes())
+                ->setType($administrativeUnit->getType() ?? $existingUnit->getType());
 
             $administrativeUnit = $existingUnit;
         }

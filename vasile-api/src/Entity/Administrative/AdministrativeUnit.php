@@ -24,6 +24,13 @@ class AdministrativeUnit
      * @OGM\Property(type="string")
      */
     private $name;
+
+    /**
+     * @var string|null
+     * @OGM\Property(type="string")
+     */
+    private $title;
+
     /**
      * @var string
      * @OGM\Property(type="string")
@@ -41,8 +48,9 @@ class AdministrativeUnit
      */
     private $postalCodes;
 
+
     /**
-     * @var int
+     * @var int|null
      * @OGM\Property(type="int")
      */
     private $type;
@@ -89,18 +97,18 @@ class AdministrativeUnit
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getType(): int
+    public function getType(): ?int
     {
         return $this->type;
     }
 
     /**
-     * @param int $type
+     * @param int|null $type
      * @return AdministrativeUnit
      */
-    public function setType(int $type): AdministrativeUnit
+    public function setType(?int $type): AdministrativeUnit
     {
         $this->type = $type;
         return $this;
@@ -121,6 +129,24 @@ class AdministrativeUnit
     public function setName(string $name): AdministrativeUnit
     {
         $this->name = $name;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param string|null $title
+     * @return AdministrativeUnit
+     */
+    public function setTitle(?string $title): AdministrativeUnit
+    {
+        $this->title = $title;
         return $this;
     }
 
@@ -186,6 +212,9 @@ class AdministrativeUnit
      */
     public function addPostalCode(string $postalCode): AdministrativeUnit
     {
+        if (intval($postalCode) == 0) {
+            return $this;
+        }
         if (is_null($this->postalCodes)) {
             $this->postalCodes = [];
         }

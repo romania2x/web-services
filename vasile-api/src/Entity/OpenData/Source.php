@@ -17,6 +17,7 @@ class Source
     public const TYPE_DATA_GOV_RO_COMPANIES = 'data_gov_ro.companies';
     public const TYPE_DATA_GOV_RO_SIRUTA = 'data_gov_ro.siruta';
     public const TYPE_DATA_GOV_RO_POSTAL_CODES = 'data_gov_ro.postal_codes';
+    public const TYPE_DATA_GOV_RO_STREETS = 'data_gov_ro.streets';
 
     /**
      * @var int

@@ -22,8 +22,6 @@ abstract class LanguageHelpers
 
     /**
      * @param string $string
-     * @param string $sourceEncoding
-     * @param string $locale
      * @return false|string
      */
     public static function asciiTranslit(string $string)
@@ -47,6 +45,8 @@ abstract class LanguageHelpers
     public static function slugify($text)
     {
         $text = self::asciiTranslit($text);
+
+        // source: https://stackoverflow.com/questions/2955251/php-function-to-make-slug-url-string
         // replace non letter or digits by -
         $text = preg_replace('~[^\pL\d]+~u', '-', $text);
 

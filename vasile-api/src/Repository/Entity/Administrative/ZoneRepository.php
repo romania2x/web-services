@@ -29,10 +29,10 @@ class ZoneRepository extends AbstractOGMRepository
         /** @var Zone $existingZone */
         if ($existingZone = $this->findOneBy(['nationalId' => $zone->getNationalId()])) {
             $existingZone
-                ->setName($zone->getName())
-                ->setSlug($zone->getSlug())
-                ->setNationalId($zone->getNationalId())
-                ->setSiruta($zone->getSiruta());
+                ->setName($zone->getName() ?? $existingZone->getName())
+                ->setSlug($zone->getSlug() ?? $existingZone->getSlug())
+                ->setNationalId($zone->getNationalId() ?? $existingZone->getNationalId())
+                ->setSiruta($zone->getSiruta() ?? $existingZone->getSiruta());
             $zone = $existingZone;
         }
 

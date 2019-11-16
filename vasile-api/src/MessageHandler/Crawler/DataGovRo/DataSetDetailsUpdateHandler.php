@@ -8,8 +8,6 @@ use App\Message\DataGovRo\DataSetDetailsUpdate;
 use App\Message\DataGovRo\DataSetProcess;
 use App\MessageHandler\AbstractMessageHandler;
 use App\Repository\Entity\OpenData\SourceRepository;
-use Facebook\WebDriver\Exception\NoSuchElementException;
-use Facebook\WebDriver\Exception\TimeOutException;
 use GuzzleHttp\RequestOptions;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Panther\Client;
@@ -95,6 +93,6 @@ class DataSetDetailsUpdateHandler extends AbstractMessageHandler
             $this->messageBus->dispatch(new DataSetDownload($resource));
         }
 
-        $this->messageBus->dispatch(new DataSetProcess($dataSetSource));
+//        $this->messageBus->dispatch(new DataSetProcess($dataSetSource));
     }
 }

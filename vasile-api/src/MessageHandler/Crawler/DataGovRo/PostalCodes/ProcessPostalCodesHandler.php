@@ -64,41 +64,51 @@ class ProcessPostalCodesHandler extends AbstractMessageHandler
             $this->log("Processing {$sheetCsv}");
             switch ($counter) {
                 case 0:
-//                    $this->processCSVFromPath(
-//                        $sheetCsv,
-//                        function ($row) {
-//                        }
-//                    );
-                    //bucuresti
-                    break;
-                case 1:
                     $this->processCSVFromPath(
                         $sheetCsv,
                         function ($row) {
-                            print_r($row);
+//                            dd($row);
+                        }
+                    );
+                    //bucuresti
+                    break;
+                case 1:
+                    $progress = $this->createProgressBar($this->getNoLinesFromPath($sheetCsv));
+                    $this->processCSVFromPath(
+                        $sheetCsv,
+                        function ($row) use ($progress) {
+                            $administrativeUnit = $this->administrativeUnitRepository->getCachedBySiruta(intval($row['SIRUTA']));
+                            if (is_null($administrativeUnit)) {
+                                $this->log("\nCannot find {$row['SIRUTA']} " . json_encode($row));
+                                return;
+                            }
+                            $administrativeUnit->addPostalCode($row['Codpostal']);
+                            $this->administrativeUnitRepository->persist($administrativeUnit, true);
+                            $this->graphEntityManager->clear();
+                            $progress->advance();
                         }
                     );
                     //>50.000
                     break;
                 case 2:
                     //<50.000
-                    /* $progress = $this->createProgressBar($this->getNoLinesFromPath($sheetCsv));
-                     $this->processCSVFromPath(
-                         $sheetCsv,
-                         function ($row) use ($progress) {
-                             $administrativeUnit = $this->administrativeUnitRepository->getCachedBySiruta(intval($row['SIRUTA']));
-                             if (is_null($administrativeUnit)) {
-                                 $this->log("\nCannot find {$row['SIRUTA']} " . json_encode($row));
-                                 return;
-                             }
-                             $administrativeUnit->addPostalCode($row['Codpostal']);
-                             $this->administrativeUnitRepository->persist($administrativeUnit, true);
-                             $this->graphEntityManager->clear();
-                             $progress->advance();
-                         }
-                     );
-                     $progress->finish();;
-                    */
+                    $progress = $this->createProgressBar($this->getNoLinesFromPath($sheetCsv));
+                    $this->processCSVFromPath(
+                        $sheetCsv,
+                        function ($row) use ($progress) {
+                            $administrativeUnit = $this->administrativeUnitRepository->getCachedBySiruta(intval($row['SIRUTA']));
+                            if (is_null($administrativeUnit)) {
+                                $this->log("\nCannot find {$row['SIRUTA']} " . json_encode($row));
+                                return;
+                            }
+                            $administrativeUnit->addPostalCode($row['Codpostal']);
+                            $this->administrativeUnitRepository->persist($administrativeUnit, true);
+                            $this->graphEntityManager->clear();
+                            $progress->advance();
+                        }
+                    );
+                    $progress->finish();;
+
                     break;
             }
         }

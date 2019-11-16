@@ -80,7 +80,14 @@ services:
       - ['setProjectDir',['%kernel.project_dir%']]
       - ['setMessageBus',['@message_bus']]
       - ['setGraphEntityManager',['@neo4j.entity_manager.default']]
-
+  App\MessageHandler\Crawler\DataGovRo\Streets\ProcessStreetsHandler:
+    arguments:
+      $cache: '@cache'
+    calls:
+      - ['setProjectDir',['%kernel.project_dir%']]
+      - ['setMessageBus',['@message_bus']]
+      - ['setGraphEntityManager',['@neo4j.entity_manager.default']]
+      - ['setSerializer',['@jms_serializer.serializer']]
 
   App\Repository\Entity\Administrative\AdministrativeUnitRepository:
     calls:
