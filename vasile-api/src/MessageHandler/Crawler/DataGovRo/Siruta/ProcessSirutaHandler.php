@@ -26,7 +26,6 @@ class ProcessSirutaHandler extends AbstractMessageHandler
      */
     public function __invoke(ProcessSiruta $message)
     {
-
         $zonesSirutaSource = $message->getSource()->getChildren()->filter(function (Source $child) {
             return $child->getTitle() == 'siruta-zone.csv';
         })->first();

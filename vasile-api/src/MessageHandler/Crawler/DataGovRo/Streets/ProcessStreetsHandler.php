@@ -37,7 +37,7 @@ class ProcessStreetsHandler extends AbstractMessageHandler
     /**
      * ProcessStreetsHandler constructor.
      * @param UnitRepository $administrativeUnitRepository
-//     * @param WayRepository  $wayRepository
+     * //     * @param WayRepository $wayRepository
      * @param \Redis         $cache
      */
     public function __construct(
@@ -55,7 +55,7 @@ class ProcessStreetsHandler extends AbstractMessageHandler
     {
         $this->log("Processing streets pack {$message->getSource()->getTitle()}");
         $this->updateLocalities($message->getSource());
-        $this->loadStreets($message->getSource());
+//        $this->loadStreets($message->getSource());
     }
 
     private function loadStreets(Source $source)
@@ -106,11 +106,13 @@ class ProcessStreetsHandler extends AbstractMessageHandler
 
         /** @var \SimpleXMLElement $localityData */
         foreach ($localitiesData->rand as $localityData) {
-            $administrativeUnit = AdministrativeUnitBuilder::fromStreetsIndex($localityData);
-            $administrativeUnit = $this->administrativeUnitRepository->createOrUpdate($administrativeUnit);
-            $this->cacheLocalityId((int) $localityData->COD, $administrativeUnit->getId());
-            $this->graphEntityManager->clear();
-            $this->progressBar->advance();
+            if ($unit = $this->administrativeUnitRepository->updateFromStreetData(get_object_vars($localityData))) {
+                $this->cacheLocalityId((int) $localityData->COD, $unit->getId());
+                $this->progressBar->advance();
+            } else {
+                $this->output->write(PHP_EOL);
+                $this->log("Could not find " . json_encode($localityData));
+            }
         }
         $this->finishProgressBar();
     }
