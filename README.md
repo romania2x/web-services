@@ -33,7 +33,7 @@ docker-compose up -d
 bin/console messenger:consume
 
 #in another shell execute the following commands
-bin/console data-gov-ro:load resources/datasets/datasets.csv #to load datasets urls from csv
-bin/console data-gov-ro:refresh [source_type] #to re-download resources
-bin/console data-gov-ro:process [source_type] #to process sources and import data
+bin/console od:load resources/datasets/datasets.csv #to load datasets urls from csv
+bin/console od:refresh [source_type] #to re-download resources
+bin/console od:process [source_type] #to process sources and import data
 ```
