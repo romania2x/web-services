@@ -1,61 +1,37 @@
 <?php
 
-namespace App\Entity\Administrative;
-
-use GraphAware\Neo4j\OGM\Annotations as OGM;
-use GraphAware\Neo4j\OGM\Common\Collection;
+namespace App\Model\Administrative;
 
 /**
  * Class Zone
- * @package App\Entity\Administrative
- * @OGM\Node(label="Zone", repository="App\Repository\Entity\Administrative\ZoneRepository")
+ * @package App\Model\Administrative
  */
 class Zone
 {
     /**
      * @var int
-     * @OGM\GraphId()
      */
-    private $id;
+    protected $id;
 
     /**
      * @var int
-     * @OGM\Property(type="int")
      */
-    private $nationalId;
+    protected $nationalId;
 
     /**
      * @var string
-     * @OGM\Property(type="string")
      */
-    private $name;
+    protected $name;
 
     /**
      * @var string
-     * @OGM\Property(type="string")
      */
-    private $slug;
+    protected $slug;
 
     /**
      * @var int
-     * @OGM\Property(type="int")
      */
-    private $siruta;
-
-    /**
-     * @var Collection|County[]
-     * @OGM\Relationship(type="PARENT", direction="OUTGOING", collection=true, mappedBy="zone", targetEntity="County")
-     */
-    private $counties;
-
-    /**
-     * Zone constructor.
-     */
-    public function __construct()
-    {
-        $this->counties = new Collection();
-    }
-
+    protected $siruta;
 
     /**
      * @return int
@@ -145,13 +121,5 @@ class Zone
     {
         $this->siruta = $siruta;
         return $this;
-    }
-
-    /**
-     * @return County[]|Collection
-     */
-    public function getCounties()
-    {
-        return $this->counties;
     }
 }

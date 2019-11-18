@@ -2,15 +2,14 @@
 
 namespace App\MessageHandler\Crawler\DataGovRo\Streets;
 
-use App\Entity\Administrative\AdministrativeUnit;
+use App\Model\Administrative\Unit;
 use App\Entity\OpenData\Source;
 use App\Message\DataGovRo\Streets\ProcessStreets;
 use App\MessageHandler\AbstractMessageHandler;
 use App\MessageHandler\Crawler\DataGovRo\FileSystemAwareTrait;
 use App\ModelCompositeBuilder\Administrative\AdministrativeUnitBuilder;
 use App\ModelCompositeBuilder\Administrative\WayBuilder;
-use App\Repository\Entity\Administrative\AdministrativeUnitRepository;
-use App\Repository\Entity\Administrative\WayRepository;
+use App\Repository\Administrative\UnitRepository;
 
 /**
  * Class ProcessStreetsHandler
@@ -26,28 +25,28 @@ class ProcessStreetsHandler extends AbstractMessageHandler
     private $cache;
 
     /**
-     * @var AdministrativeUnitRepository
+     * @var UnitRepository
      */
     private $administrativeUnitRepository;
 
-    /**
-     * @var WayRepository
-     */
-    private $wayRepository;
+//    /**
+//     * @var WayRepository
+//     */
+//    private $wayRepository;
 
     /**
      * ProcessStreetsHandler constructor.
-     * @param AdministrativeUnitRepository $administrativeUnitRepository
-     * @param WayRepository                $wayRepository
-     * @param \Redis                       $cache
+     * @param UnitRepository $administrativeUnitRepository
+//     * @param WayRepository  $wayRepository
+     * @param \Redis         $cache
      */
     public function __construct(
-        AdministrativeUnitRepository $administrativeUnitRepository,
-        WayRepository $wayRepository,
+        UnitRepository $administrativeUnitRepository,
+//        WayRepository $wayRepository,
         \Redis $cache
     ) {
         parent::__construct();
-        $this->wayRepository                = $wayRepository;
+//        $this->wayRepository                = $wayRepository;
         $this->administrativeUnitRepository = $administrativeUnitRepository;
         $this->cache                        = $cache;
     }
@@ -68,8 +67,7 @@ class ProcessStreetsHandler extends AbstractMessageHandler
         })->first();
 
         $streetsData = simplexml_load_file($this->generateLocalFilePath($streets));
-        $progress    = $this->createProgressBar(count($streetsData->rand));
-        $progress->start();
+        $this->createProgressBar(count($streetsData->rand));
 
         /** @var \SimpleXMLElement $streetData */
         foreach ($streetsData->rand as $streetData) {
@@ -85,10 +83,9 @@ class ProcessStreetsHandler extends AbstractMessageHandler
             $this->wayRepository->createOrUpdate($way, $administrativeUnit);
 
             $this->graphEntityManager->clear();
-            $progress->advance();
+            $this->progressBar->advance();
         }
-        $progress->finish();
-        $this->output->write(PHP_EOL);
+        $this->finishProgressBar();
     }
 
     /**
@@ -105,8 +102,7 @@ class ProcessStreetsHandler extends AbstractMessageHandler
 
         $localitiesData = simplexml_load_file($this->generateLocalFilePath($localities));
 
-        $progress = $this->createProgressBar(count($localitiesData->rand));
-        $progress->start();
+        $this->createProgressBar(count($localitiesData->rand));
 
         /** @var \SimpleXMLElement $localityData */
         foreach ($localitiesData->rand as $localityData) {
@@ -114,10 +110,9 @@ class ProcessStreetsHandler extends AbstractMessageHandler
             $administrativeUnit = $this->administrativeUnitRepository->createOrUpdate($administrativeUnit);
             $this->cacheLocalityId((int) $localityData->COD, $administrativeUnit->getId());
             $this->graphEntityManager->clear();
-            $progress->advance();
+            $this->progressBar->advance();
         }
-        $progress->finish();
-        $this->output->write(PHP_EOL);
+        $this->finishProgressBar();
     }
 
     /**

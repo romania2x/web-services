@@ -1,62 +1,40 @@
 <?php
 
-namespace App\Entity\Administrative;
-
-use GraphAware\Neo4j\OGM\Annotations as OGM;
+namespace App\Model\Administrative;
 
 /**
  * Class County
- * @package App\Entity\Administrative
- * @OGM\Node(label="County", repository="App\Repository\Entity\Administrative\CountyRepository")
+ * @package App\Model\Administrative
  */
 class County
 {
     /**
      * @var int
-     * @OGM\GraphId()
      */
-    private $id;
+    protected $id;
 
     /**
      * @var int
-     * @OGM\Property(type="int")
      */
-    private $nationalId;
+    protected $nationalId;
 
     /**
      * @var string
-     * @OGM\Property(type="string")
      */
-    private $name;
+    protected $name;
 
     /**
      * @var string
-     * @OGM\Property(type="string")
      */
-    private $slug;
+    protected $slug;
 
     /**
      * @var string
-     * @OGM\Property(type="string")
      */
-    private $mnemonic;
-
-    /**
-     * @var AdministrativeUnit
-     * @OGM\Relationship(type="PARENT", direction="OUTGOING", collection=false, targetEntity="AdministrativeUnit")
-     */
-    private $administrativeUnit;
-
-    /**
-     * @var Zone
-     * @OGM\Relationship(type="PARENT", direction="INCOMING", collection=false, mappedBy="counties",
-     *                                  targetEntity="Zone")
-     */
-    private $zone;
+    protected $mnemonic;
 
     /**
      * @var int
-     * @OGM\Property(type="int")
      */
     private $sortingIndex;
 
@@ -151,24 +129,6 @@ class County
     }
 
     /**
-     * @return Zone
-     */
-    public function getZone(): Zone
-    {
-        return $this->zone;
-    }
-
-    /**
-     * @param Zone $zone
-     * @return County
-     */
-    public function setZone(Zone $zone): County
-    {
-        $this->zone = $zone;
-        return $this;
-    }
-
-    /**
      * @return int
      */
     public function getSortingIndex(): int
@@ -183,24 +143,6 @@ class County
     public function setSortingIndex(int $sortingIndex): County
     {
         $this->sortingIndex = $sortingIndex;
-        return $this;
-    }
-
-    /**
-     * @return AdministrativeUnit
-     */
-    public function getAdministrativeUnit(): AdministrativeUnit
-    {
-        return $this->administrativeUnit;
-    }
-
-    /**
-     * @param AdministrativeUnit $administrativeUnit
-     * @return County
-     */
-    public function setAdministrativeUnit(AdministrativeUnit $administrativeUnit): County
-    {
-        $this->administrativeUnit = $administrativeUnit;
         return $this;
     }
 }

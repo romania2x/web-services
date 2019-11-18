@@ -1,25 +1,19 @@
 <?php
 declare(strict_types = 1);
 
-namespace App\Repository\Entity\OpenData;
+namespace App\Repository\OpenData;
 
 use App\Entity\OpenData\Source;
-use App\Repository\Entity\AbstractOGMRepository;
+use App\Repository\AbstractRepository;
+use GraphAware\Neo4j\OGM\Repository\BaseRepository;
+use phpDocumentor\Reflection\Types\Mixed_;
 
 /**
  * Class SourceRepository
  * @package App\Repository\Entity\OpenData
  */
-class SourceRepository extends AbstractOGMRepository
+class SourceRepository extends AbstractRepository
 {
-    /**
-     * @return string
-     */
-    protected function getEntityClassName(): string
-    {
-        return Source::class;
-    }
-
     /**
      * @param string      $url
      * @param string      $type
@@ -38,7 +32,7 @@ class SourceRepository extends AbstractOGMRepository
         ?bool $downloadable = false,
         ?Source $parent = null
     ): Source {
-        $source = $this->findOneBy(['url' => $url]) ?? new Source();
+        $source = $this->graphEntityManager->getRepository(Source::class)->findOneBy(['url' => $url]) ?? new Source();
 
         $source
             ->setUrl($url)
@@ -51,26 +45,17 @@ class SourceRepository extends AbstractOGMRepository
             $source->setParent($parent);
         }
 
-        $this->entityManager->persist($source);
-        $this->entityManager->flush();
+        $this->graphEntityManager->persist($source);
+        $this->graphEntityManager->flush();
 
         return $source;
     }
 
     /**
-     * @param string $type
-     * @return array|Source[]
-     * @throws \Exception
+     * @return BaseRepository
      */
-    public function findDownloadableResourcesByType(string $type): array
+    public function getOGMRepository(): BaseRepository
     {
-        $query = $this->entityManager->createQuery(<<<EOL
-            match (s:Source{downloadable:true}) where type = {type} return s
-EOL
-        );
-        $query->addEntityMapping('s', Source::class);
-        $query->setParameter('type', $type);
-
-        return (array) $query->execute();
+        return $this->graphEntityManager->getRepository(Source::class);
     }
 }

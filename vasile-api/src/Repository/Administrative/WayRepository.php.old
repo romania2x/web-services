@@ -4,28 +4,16 @@ declare(strict_types = 1);
 
 namespace App\Repository\Entity\Administrative;
 
-use App\Entity\Administrative\AdministrativeUnit;
-use App\Entity\Administrative\Way;
-use App\Repository\Entity\AbstractOGMRepository;
+use App\Model\Administrative\AdministrativeUnit;
+use App\Model\Administrative\Way;
+use App\Repository\Entity\AbstractRepository;
 
 /**
  * Class WayRepository
  * @package App\Repository\Entity\Administrative
  */
-class WayRepository extends AbstractOGMRepository
+class WayRepository extends AbstractRepository
 {
-    /**
-     * @var \Redis
-     */
-    private $cache;
-
-    /**
-     * @param \Redis $cache
-     */
-    public function setCache(\Redis $cache)
-    {
-        $this->cache = $cache;
-    }
 
     /**
      * @param Way                $way

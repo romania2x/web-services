@@ -1,14 +1,12 @@
 <?php
 
-namespace App\Repository\Entity\OpenStreetMap;
+namespace App\Repository\OpenStreetMap;
 
-use App\Entity\OpenStreetMap\OpenStreetMapEntityInterface;
-use CrEOF\Spatial\PHP\Types\Geometry\LineString;
 use Doctrine\ORM\EntityRepository;
 
 /**
  * Class PlanetRepository
- * @package App\Repository\Entity\OpenStreetMap
+ * @package App\Repository\OpenStreetMap
  */
 class PlanetRepository extends EntityRepository
 {

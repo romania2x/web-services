@@ -2,15 +2,11 @@
 
 namespace App\MessageHandler\Crawler\DataGovRo\Siruta;
 
-use App\Constants\Administrative\AdministrativeUnitType;
-use App\Entity\Administrative\AdministrativeUnit;
-use App\Entity\Administrative\County;
 use App\Message\DataGovRo\Siruta\LoadAdministrativeUnits;
 use App\MessageHandler\AbstractMessageHandler;
 use App\MessageHandler\Crawler\DataGovRo\FileSystemAwareTrait;
-use App\ModelCompositeBuilder\Administrative\AdministrativeUnitBuilder;
-use App\Repository\Entity\Administrative\AdministrativeUnitRepository;
-use App\Repository\Entity\Administrative\CountyRepository;
+use App\Repository\Administrative\UnitRepository;
+use App\Repository\Administrative\CountyRepository;
 
 /**
  * Class LoadAdministrativeUnitsHandler
@@ -21,27 +17,18 @@ class LoadAdministrativeUnitsHandler extends AbstractMessageHandler
     use FileSystemAwareTrait;
 
     /**
-     * @var AdministrativeUnitRepository
+     * @var UnitRepository
      */
     private $administrativeUnitRepository;
 
     /**
-     * @var CountyRepository
-     */
-    private $countyRepository;
-
-    /**
      * LoadAdministrativeUnitsHandler constructor.
-     * @param AdministrativeUnitRepository $administrativeUnitRepository
-     * @param CountyRepository             $countyRepository
+     * @param UnitRepository $administrativeUnitRepository
      */
-    public function __construct(
-        AdministrativeUnitRepository $administrativeUnitRepository,
-        CountyRepository $countyRepository
-    ) {
+    public function __construct(UnitRepository $administrativeUnitRepository)
+    {
         parent::__construct();
         $this->administrativeUnitRepository = $administrativeUnitRepository;
-        $this->countyRepository             = $countyRepository;
     }
 
 
@@ -56,38 +43,14 @@ class LoadAdministrativeUnitsHandler extends AbstractMessageHandler
 
         $this->processCSVFromSource(
             $message->getSource(),
-            [$this, 'processRow'],
+            function (array $row) {
+                $this->administrativeUnitRepository->createFromSiruta($row);
+                $this->progressBar->advance();
+            },
             $message->getSeparator(),
             $message->getEncoding()
         );
-        $this->finishProgressBar();
-    }
-
-    /**
-     * @param array $row
-     * @throws \Exception
-     */
-    private function processRow(array $row)
-    {
-        $administrativeUnit = $this->administrativeUnitRepository->createOrUpdate(AdministrativeUnitBuilder::fromSiruta($row));
-
-        if ($administrativeUnit->getType() == AdministrativeUnitType::COUNTY) {
-            /** @var County $county */
-            $county = $this->countyRepository->findOneBy(['nationalId' => intval($row['JUD'])]);
-
-            $county->setAdministrativeUnit($administrativeUnit);
-            $this->countyRepository->persist($county, true);
-        } else {
-            /** @var AdministrativeUnit $parent */
-            $parent = $this->administrativeUnitRepository->getCachedBySiruta(intval($row['SIRSUP']));
-            if (is_null($parent)) {
-                $this->log('Parent not found for ' . json_encode($row));
-                return;
-            }
-            $administrativeUnit->setParent($parent);
-            $this->administrativeUnitRepository->persist($administrativeUnit, true);
-        }
         $this->graphEntityManager->clear();
-        $this->progressBar->advance();
+        $this->finishProgressBar();
     }
 }

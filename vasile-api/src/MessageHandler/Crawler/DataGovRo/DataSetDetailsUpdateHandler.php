@@ -5,9 +5,8 @@ namespace App\MessageHandler\Crawler\DataGovRo;
 
 use App\Message\DataGovRo\DataSetDownload;
 use App\Message\DataGovRo\DataSetDetailsUpdate;
-use App\Message\DataGovRo\DataSetProcess;
 use App\MessageHandler\AbstractMessageHandler;
-use App\Repository\Entity\OpenData\SourceRepository;
+use App\Repository\OpenData\SourceRepository;
 use GuzzleHttp\RequestOptions;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Panther\Client;

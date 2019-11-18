@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Command\DataGovRo;
+namespace App\Command\OpenData;
 
 use App\Command\AbstractCommand;
 use App\Entity\OpenData\Source;
-use App\Message\DataGovRo\DataSetProcess;
-use App\Repository\Entity\OpenData\SourceRepository;
-use GraphAware\Neo4j\OGM\EntityManagerInterface;
+use App\Message\DataGovRo\DataSetDetailsUpdate;
+use App\Repository\OpenData\SourceRepository;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -14,15 +13,15 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
- * Class ProcessCommand
+ * Class RefreshCommand
  * @package App\Command\DataGovRo
  */
-class ProcessCommand extends AbstractCommand
+class RefreshCommand extends AbstractCommand
 {
     /**
      * @var string
      */
-    protected static $defaultName = 'data-gov-ro:process';
+    protected static $defaultName = 'data-gov-ro:refresh';
 
     /**
      * @var MessageBusInterface
@@ -72,7 +71,7 @@ class ProcessCommand extends AbstractCommand
         $progress->start();
 
         foreach ($sources as $source) {
-            $this->messageBus->dispatch(new DataSetProcess($source));
+            $this->messageBus->dispatch(new DataSetDetailsUpdate($source->getUrl(), $source->getType()));
             $progress->advance();
         }
         $progress->finish();

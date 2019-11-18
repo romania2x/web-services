@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Command\DataGovRo;
+namespace App\Command\OpenData;
 
 use App\Command\AbstractCommand;
 use GraphAware\Neo4j\OGM\EntityManagerInterface;
@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class PruneCommand extends AbstractCommand
 {
-    protected static $defaultName = 'data-gov-ro:prune';
+    protected static $defaultName = 'od:prune';
 
     /**
      * @var EntityManagerInterface
@@ -43,16 +43,7 @@ class PruneCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->entityManager->getDatabaseDriver()->run("match (w:Way)-[rel]-(b) delete rel");
-        $this->entityManager->getDatabaseDriver()->run("match (w:Way) delete w");
-        $this->entityManager->getDatabaseDriver()->run("match (a:AdministrativeUnit)-[rel]-(b) delete rel");
-        $this->entityManager->getDatabaseDriver()->run("match (a:AdministrativeUnit) delete  a");
-        $this->entityManager->getDatabaseDriver()->run("match (c:County)-[rel]-(b) delete rel");
-        $this->entityManager->getDatabaseDriver()->run("match (c:County) delete c");
-        $this->entityManager->getDatabaseDriver()->run("match (z:Zone)-[rel]-(b) delete rel");
-        $this->entityManager->getDatabaseDriver()->run("match (z:Zone) delete z");
-        $this->cache->del($this->cache->keys('administrative_unit.*'));
+        $this->entityManager->getDatabaseDriver()->run("match (s:Source)-[rel]-(b) delete rel");
+        $this->entityManager->getDatabaseDriver()->run("match (s:Source) delete s");
     }
-
-
 }

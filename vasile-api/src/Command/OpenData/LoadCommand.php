@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Command\DataGovRo;
+namespace App\Command\OpenData;
 
 use App\Command\AbstractCommand;
 use App\Message\DataGovRo\DataSetDetailsUpdate;
@@ -18,7 +18,7 @@ class LoadCommand extends AbstractCommand
     /**
      * @var string
      */
-    protected static $defaultName = 'data-gov-ro:load';
+    protected static $defaultName = 'od:load';
 
     /**
      * @var MessageBusInterface

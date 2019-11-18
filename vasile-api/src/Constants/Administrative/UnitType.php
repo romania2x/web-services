@@ -3,10 +3,10 @@
 namespace App\Constants\Administrative;
 
 /**
- * Class AdministrativeUnitType
+ * Class UnitType
  * @package App\Constants\Administrative
  */
-abstract class AdministrativeUnitType
+abstract class UnitType
 {
     const COUNTY = 40;
     const MUNICIPALITY_WITH_COUNTY_SEAT = 1;

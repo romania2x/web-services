@@ -2,7 +2,7 @@
 
 namespace App\ModelCompositeBuilder\Administrative;
 
-use App\Entity\Administrative\AdministrativeUnit;
+use App\Model\Administrative\AdministrativeUnit;
 use App\Helpers\LanguageHelpers;
 
 /**
@@ -100,7 +100,7 @@ class AdministrativeUnitBuilder
      */
     public static function fromStreetsIndex(\SimpleXMLElement $element): AdministrativeUnit
     {
-        $builder = new self();
+        $builder = new AdministrativeUnitBuilder();
         foreach (get_object_vars($element) as $key => $value) {
             $builder->addStreetsData($key, $value);
         }

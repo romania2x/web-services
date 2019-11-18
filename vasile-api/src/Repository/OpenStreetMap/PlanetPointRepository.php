@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Repository\Entity\OpenStreetMap;
+namespace App\Repository\OpenStreetMap;
 
 /**
  * Class PlanetPointRepository
- * @package App\Repository\Entity\OpenStreetMap
+ * @package App\Repository\OpenStreetMap
  */
 class PlanetPointRepository extends PlanetRepository
 {

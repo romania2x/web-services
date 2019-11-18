@@ -27,8 +27,12 @@ services:
     resource: '../src/Controller'
     tags: ['controller.service_arguments']
 
-  # add more service definitions when explicit configuration is needed
-  # please note that last definitions always *replace* previous ones
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones
+  jms_serializer.serialized_name_annotation_strategy:
+    class: JMS\Serializer\Naming\SerializedNameAnnotationStrategy
+    arguments:
+      - '@jms_serializer.identical_property_naming_strategy'
 
   Jsor\Doctrine\PostGIS\Event\ORMSchemaEventSubscriber:
     tags:
@@ -53,7 +57,7 @@ services:
       - ['setMessageBus',['@message_bus']]
       - ['setGraphEntityManager',['@neo4j.entity_manager.default']]
     arguments:
-      $sourceRepository: '@App\Repository\Entity\OpenData\SourceRepository'
+      $sourceRepository: '@App\Repository\OpenData\SourceRepository'
   App\MessageHandler\Crawler\DataGovRo\DataSetDownloadHandler:
     calls:
       - ['setProjectDir',['%kernel.project_dir%']]
@@ -64,7 +68,7 @@ services:
       - ['setMessageBus',['@message_bus']]
       - ['setGraphEntityManager',['@neo4j.entity_manager.default']]
     arguments:
-      $sourceRepository: '@App\Repository\Entity\OpenData\SourceRepository'
+      $sourceRepository: '@App\Repository\OpenData\SourceRepository'
   App\MessageHandler\Crawler\DataGovRo\Siruta\ProcessSirutaHandler:
     calls:
       - ['setProjectDir',['%kernel.project_dir%']]
@@ -87,7 +91,7 @@ services:
 
   App\MessageHandler\Crawler\DataGovRo\Siruta\LoadZonesHandler:
     arguments:
-      $zoneRepository: '@App\Repository\Entity\Administrative\ZoneRepository'
+      $zoneRepository: '@App\Repository\Administrative\ZoneRepository'
     calls:
       - ['setProjectDir',['%kernel.project_dir%']]
       - ['setMessageBus',['@message_bus']]
@@ -95,8 +99,7 @@ services:
 
   App\MessageHandler\Crawler\DataGovRo\Siruta\LoadCountiesHandler:
     arguments:
-      $zoneRepository: '@App\Repository\Entity\Administrative\ZoneRepository'
-      $countyRepository: '@App\Repository\Entity\Administrative\CountyRepository'
+      $countyRepository: '@App\Repository\Administrative\CountyRepository'
     calls:
       - ['setProjectDir',['%kernel.project_dir%']]
       - ['setMessageBus',['@message_bus']]
@@ -104,17 +107,28 @@ services:
 
   App\MessageHandler\Crawler\DataGovRo\Siruta\LoadAdministrativeUnitsHandler:
     arguments:
-      $administrativeUnitRepository: '@App\Repository\Entity\Administrative\AdministrativeUnitRepository'
-      $countyRepository: '@App\Repository\Entity\Administrative\CountyRepository'
+      $administrativeUnitRepository: '@App\Repository\Administrative\UnitRepository'
     calls:
       - ['setProjectDir',['%kernel.project_dir%']]
       - ['setMessageBus',['@message_bus']]
       - ['setGraphEntityManager',['@neo4j.entity_manager.default']]
 
-  App\Repository\Entity\Administrative\AdministrativeUnitRepository:
-    calls:
-      - ['setCache',['@cache']]
+  App\Repository\Administrative\ZoneRepository:
+    arguments:
+      $serializer: '@jms_serializer.serializer'
 
-  App\Command\DataGovRo\PruneCommand:
+  App\Repository\Administrative\CountyRepository:
+    arguments:
+      $serializer: '@jms_serializer.serializer'
+
+  App\Repository\Administrative\UnitRepository:
+    arguments:
+      $serializer: '@jms_serializer.serializer'
+
+  App\Repository\OpenData\SourceRepository:
+    arguments:
+      $serializer: '@jms_serializer.serializer'
+
+  App\Command\OpenData\PruneCommand:
     arguments:
       $cache: '@cache'

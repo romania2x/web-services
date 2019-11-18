@@ -6,7 +6,7 @@ use App\Entity\OpenData\Source;
 use App\Message\DataGovRo\PostalCodes\ProcessPostalCodes;
 use App\MessageHandler\AbstractMessageHandler;
 use App\MessageHandler\Crawler\DataGovRo\FileSystemAwareTrait;
-use App\Repository\Entity\Administrative\AdministrativeUnitRepository;
+use App\Repository\Administrative\UnitRepository;
 use Symfony\Component\Process\Process;
 
 /**
@@ -18,15 +18,15 @@ class ProcessPostalCodesHandler extends AbstractMessageHandler
     use FileSystemAwareTrait;
 
     /**
-     * @var AdministrativeUnitRepository
+     * @var UnitRepository
      */
     private $administrativeUnitRepository;
 
     /**
      * ProcessPostalCodesHandler constructor.
-     * @param AdministrativeUnitRepository $administrativeUnitRepository
+     * @param UnitRepository $administrativeUnitRepository
      */
-    public function __construct(AdministrativeUnitRepository $administrativeUnitRepository)
+    public function __construct(UnitRepository $administrativeUnitRepository)
     {
         parent::__construct();
         $this->administrativeUnitRepository = $administrativeUnitRepository;

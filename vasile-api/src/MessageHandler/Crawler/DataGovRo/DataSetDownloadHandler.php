@@ -2,7 +2,6 @@
 
 namespace App\MessageHandler\Crawler\DataGovRo;
 
-use App\Entity\OpenData\Source;
 use App\Message\DataGovRo\DataSetDownload;
 use App\MessageHandler\AbstractMessageHandler;
 use GuzzleHttp\Client as HttpClient;

@@ -26,6 +26,7 @@ class ProcessSirutaHandler extends AbstractMessageHandler
      */
     public function __invoke(ProcessSiruta $message)
     {
+
         $zonesSirutaSource = $message->getSource()->getChildren()->filter(function (Source $child) {
             return $child->getTitle() == 'siruta-zone.csv';
         })->first();
@@ -48,5 +49,7 @@ class ProcessSirutaHandler extends AbstractMessageHandler
         $this->messageBus->dispatch(
             new LoadAdministrativeUnits($sirutaSource, self::ENCODING, self::SEPARATOR)
         );
+
+        $this->graphEntityManager->clear();
     }
 }

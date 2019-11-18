@@ -2,7 +2,7 @@
 
 namespace App\Transformer\ElasticSearch;
 
-use App\Entity\OpenStreetMap\OpenStreetMapEntityInterface;
+use App\Model\OpenStreetMap\OpenStreetMapEntityInterface;
 use Elastica\Document;
 use FOS\ElasticaBundle\Transformer\ModelToElasticaTransformerInterface;
 use proj4php\Point;

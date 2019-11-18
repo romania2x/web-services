@@ -2,7 +2,7 @@
 
 namespace App\ModelCompositeBuilder\Administrative;
 
-use App\Entity\Administrative\Way;
+use App\Model\Administrative\Way;
 use App\Helpers\LanguageHelpers;
 
 /**

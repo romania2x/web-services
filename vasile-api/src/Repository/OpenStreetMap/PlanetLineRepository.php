@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repository\Entity\OpenStreetMap;
+namespace App\Repository\OpenStreetMap;
 
 /**
  * Class PlanetLineRepository

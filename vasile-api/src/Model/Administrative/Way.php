@@ -2,50 +2,35 @@
 
 declare(strict_types = 1);
 
-namespace App\Entity\Administrative;
-
-use GraphAware\Neo4j\OGM\Annotations as OGM;
+namespace App\Model\Administrative;
 
 /**
  * Class Way
- * @package App\Entity\Administrative
- * @OGM\Node(label="Way")
+ * @package App\Model\Administrative
  */
 class Way
 {
     /**
      * @var int
-     * @OGM\GraphId()
      */
-    private $id;
+    protected $id;
     /**
      * @var string
-     * @OGM\Property(type="string")
      */
-    private $title;
+    protected $title;
     /**
      * @var string
-     * @OGM\Property(type="string")
      */
-    private $name;
+    protected $name;
     /**
      * @var string
-     * @OGM\Property(type="string")
      */
-    private $slug;
+    protected $slug;
 
     /**
      * @var int
-     * @OGM\Property(type="int")
      */
-    private $countyId;
-
-    /**
-     * @var AdministrativeUnit
-     * @OGM\Relationship(type="PARENT", direction="INCOMING", collection=false,
-     *                                  targetEntity="AdministrativeUnit")
-     */
-    private $administrativeUnit;
+    protected $countyId;
 
     /**
      * @return int
@@ -116,24 +101,6 @@ class Way
     public function setSlug(string $slug): Way
     {
         $this->slug = $slug;
-        return $this;
-    }
-
-    /**
-     * @return AdministrativeUnit
-     */
-    public function getAdministrativeUnit(): AdministrativeUnit
-    {
-        return $this->administrativeUnit;
-    }
-
-    /**
-     * @param AdministrativeUnit $administrativeUnit
-     * @return Way
-     */
-    public function setAdministrativeUnit(AdministrativeUnit $administrativeUnit): Way
-    {
-        $this->administrativeUnit = $administrativeUnit;
         return $this;
     }
 

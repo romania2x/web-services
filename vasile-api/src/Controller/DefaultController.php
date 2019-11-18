@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Document\User;
-use App\Entity\Project;
+use App\Model\Project;
 use App\Mercure\MercureClient;
 use App\Message\HeartbeatMessage;
 use FOS\RestBundle\Controller\Annotations as Rest;
