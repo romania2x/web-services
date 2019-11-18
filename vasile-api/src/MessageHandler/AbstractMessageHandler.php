@@ -4,6 +4,7 @@ namespace App\MessageHandler;
 
 use GraphAware\Neo4j\OGM\EntityManager;
 use GraphAware\Neo4j\OGM\EntityManagerInterface;
+use JMS\Serializer\SerializerInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -22,6 +23,11 @@ abstract class AbstractMessageHandler implements MessageHandlerInterface
     protected $output;
 
     /**
+     * @var ProgressBar
+     */
+    protected $progressBar;
+
+    /**
      * @var MessageBusInterface
      */
     protected $messageBus;
@@ -32,10 +38,17 @@ abstract class AbstractMessageHandler implements MessageHandlerInterface
     protected $graphEntityManager;
 
     /**
+     * @var SerializerInterface
+     */
+    protected $serializer;
+
+
+    /**
      * AbstractMessageHandler constructor.
      */
     public function __construct()
     {
+        setlocale(LC_CTYPE, 'ro_RO');
         $this->output = new ConsoleOutput();
     }
 
@@ -60,6 +73,14 @@ abstract class AbstractMessageHandler implements MessageHandlerInterface
     }
 
     /**
+     * @param SerializerInterface $serializer
+     */
+    public function setSerializer(SerializerInterface $serializer)
+    {
+        $this->serializer = $serializer;
+    }
+
+    /**
      * @param string $message
      * @param bool   $rewind
      */
@@ -77,8 +98,13 @@ abstract class AbstractMessageHandler implements MessageHandlerInterface
 
     protected function createProgressBar(int $total)
     {
-        $progress = new ProgressBar($this->output, $total);
-        $progress->setFormat(' %current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s% %memory:6s%');
-        return $progress;
+        $this->progressBar = new ProgressBar($this->output, $total);
+        $this->progressBar->setFormat(' %current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s% %memory:6s%');
+    }
+
+    protected function finishProgressBar()
+    {
+        $this->progressBar->finish();
+        $this->output->write(PHP_EOL);
     }
 }

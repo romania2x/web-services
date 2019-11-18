@@ -3,11 +3,11 @@
 namespace App\Controller;
 
 use App\Cache\OSMPropertiesCache;
-use App\Entity\OpenStreetMap\OpenStreetMapEntityInterface;
-use App\Entity\OpenStreetMap\PlanetLine;
-use App\Entity\OpenStreetMap\PlanetPoint;
-use App\Entity\OpenStreetMap\PlanetPolygon;
-use App\Entity\OpenStreetMap\PlanetRoad;
+use App\Model\OpenStreetMap\OpenStreetMapEntityInterface;
+use App\Model\OpenStreetMap\PlanetLine;
+use App\Model\OpenStreetMap\PlanetPoint;
+use App\Model\OpenStreetMap\PlanetPolygon;
+use App\Model\OpenStreetMap\PlanetRoad;
 use App\Repository\Entity\OpenStreetMap\PlanetRepository;
 use App\Request\OpenStreetMap\SearchFeaturesRequest;
 use Doctrine\DBAL\DBALException;

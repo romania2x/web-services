@@ -1,8 +1,10 @@
 <?php
+declare(strict_types = 1);
 
 namespace App\Message\DataGovRo\Siruta;
 
 use App\Entity\OpenData\Source;
+use App\Message\Traits\SourceAwareTrait;
 
 /**
  * Class ProcessSiruta
@@ -10,10 +12,7 @@ use App\Entity\OpenData\Source;
  */
 class ProcessSiruta
 {
-    /**
-     * @var Source
-     */
-    private $source;
+    use SourceAwareTrait;
 
     /**
      * ProcessSiruta constructor.
@@ -22,13 +21,5 @@ class ProcessSiruta
     public function __construct(Source $source)
     {
         $this->source = $source;
-    }
-
-    /**
-     * @return Source
-     */
-    public function getSource(): Source
-    {
-        return $this->source;
     }
 }

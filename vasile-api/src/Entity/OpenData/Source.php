@@ -3,69 +3,65 @@ declare(strict_types = 1);
 
 namespace App\Entity\OpenData;
 
-use GraphAware\Neo4j\OGM\Annotations as Graph;
+use GraphAware\Neo4j\OGM\Annotations as OGM;
 use GraphAware\Neo4j\OGM\Common\Collection;
 
 /**
  * Class Source
  * @package App\Entity\OpenData
  *
- * @Graph\Node(label="Source", repository="App\Repository\Entity\OpenData\SourceRepository")
+ * @OGM\Node(label="Source")
  */
 class Source
 {
-    public const TYPE_DATA_GOV_RO_COMPANIES = 'data_gov_ro.companies';
-    public const TYPE_DATA_GOV_RO_SIRUTA = 'data_gov_ro.siruta';
-    public const TYPE_DATA_GOV_RO_POSTAL_CODES = 'data_gov_ro.postal_codes';
-
     /**
      * @var int
-     * @Graph\GraphId()
+     * @OGM\GraphId()
      */
-    private $id;
+    protected $id;
 
     /**
      * @var string
-     * @Graph\Property(type="string")
+     * @OGM\Property(type="string")
      */
-    private $title;
+    protected $title;
 
     /**
      * @var string|null
-     * @Graph\Property(type="string")
+     * @OGM\Property(type="string")
      */
-    private $description;
+    protected $description;
 
     /**
      * @var string
-     * @Graph\Property(type="string")
+     * @OGM\Property(type="string")
      */
-    private $url;
+    protected $url;
 
     /**
      * @var string
-     * @Graph\Property(type="string")
+     * @OGM\Property(type="string")
      */
-    private $type;
+    protected $type;
 
     /**
      * @var bool
-     * @Graph\Property(type="boolean")
+     * @OGM\Property(type="boolean")
      */
-    private $downloadable = false;
+    protected $downloadable = false;
     /**
      * @var Source
-     * @Graph\Relationship(type="PARENT", direction="INCOMING", collection=false, mappedBy="children",
+     * @OGM\Relationship(type="PARENT", direction="INCOMING", collection=false, mappedBy="children",
      *                                    targetEntity="Source")
      */
-    private $parent;
+    protected $parent;
 
     /**
      * @var Source[]|Collection
-     * @Graph\Relationship(type="PARENT", direction="OUTGOING", collection=true, mappedBy="parent",
+     * @OGM\Relationship(type="PARENT", direction="OUTGOING", collection=true, mappedBy="parent",
      *                                    targetEntity="Source")
      */
-    private $children;
+    protected $children;
 
     /**
      * Source constructor.
@@ -81,6 +77,16 @@ class Source
     public function getId(): int
     {
         return $this->id;
+    }
+
+    /**
+     * @param int $id
+     * @return Source
+     */
+    public function setId(int $id): Source
+    {
+        $this->id = $id;
+        return $this;
     }
 
     /**

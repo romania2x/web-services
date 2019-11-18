@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Class PlanetLine
  * @package App\Entity\OpenStreetMap
- * @ORM\Entity(repositoryClass="App\Repository\Entity\OpenStreetMap\PlanetLineRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\OpenStreetMap\PlanetLineRepository")
  * @ORM\Table(name="planet_osm_line")
  */
 class PlanetLine implements OpenStreetMapEntityInterface

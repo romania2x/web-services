@@ -5,13 +5,8 @@ namespace App\MessageHandler\Crawler\DataGovRo;
 
 use App\Message\DataGovRo\DataSetDownload;
 use App\Message\DataGovRo\DataSetDetailsUpdate;
-use App\Message\DataGovRo\DataSetProcess;
 use App\MessageHandler\AbstractMessageHandler;
-use App\Repository\Entity\OpenData\SourceRepository;
-use Facebook\WebDriver\Exception\NoSuchElementException;
-use Facebook\WebDriver\Exception\TimeOutException;
-use Facebook\WebDriver\Remote\RemoteWebElement;
-use Facebook\WebDriver\WebDriverBy;
+use App\Repository\OpenData\SourceRepository;
 use GuzzleHttp\RequestOptions;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Panther\Client;
@@ -59,8 +54,6 @@ class DataSetDetailsUpdateHandler extends AbstractMessageHandler
 
     /**
      * @param DataSetDetailsUpdate $message
-     * @throws NoSuchElementException
-     * @throws TimeOutException
      * @throws \Exception
      */
     public function __invoke(DataSetDetailsUpdate $message)
@@ -68,9 +61,6 @@ class DataSetDetailsUpdateHandler extends AbstractMessageHandler
         $this->log("Downloading details for {$message->getUrl()}");
 
         $crawler = new Crawler($this->httpClient->get($message->getUrl())->getBody()->getContents());
-
-//        $this->crawlerClient->request('GET', $message->getUrl());
-//        $crawler = $this->crawlerClient->waitFor('.module-content');
 
         $set = [
             'title'       => trim($crawler->filter('.module-content h1')->text()),
@@ -102,6 +92,6 @@ class DataSetDetailsUpdateHandler extends AbstractMessageHandler
             $this->messageBus->dispatch(new DataSetDownload($resource));
         }
 
-        $this->messageBus->dispatch(new DataSetProcess($dataSetSource));
+//        $this->messageBus->dispatch(new DataSetProcess($dataSetSource));
     }
 }

@@ -2,10 +2,10 @@
 
 namespace App\Command\OSM;
 
-use App\Entity\OpenStreetMap\PlanetLine;
-use App\Entity\OpenStreetMap\PlanetPoint;
-use App\Entity\OpenStreetMap\PlanetPolygon;
-use App\Entity\OpenStreetMap\PlanetRoad;
+use App\Model\OpenStreetMap\PlanetLine;
+use App\Model\OpenStreetMap\PlanetPoint;
+use App\Model\OpenStreetMap\PlanetPolygon;
+use App\Model\OpenStreetMap\PlanetRoad;
 use App\Message\IndexOpenStreetMapEntityMessage;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;

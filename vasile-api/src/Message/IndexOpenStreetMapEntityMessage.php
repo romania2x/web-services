@@ -2,7 +2,7 @@
 
 namespace App\Message;
 
-use App\Entity\OpenStreetMap\OpenStreetMapEntityInterface;
+use App\Model\OpenStreetMap\OpenStreetMapEntityInterface;
 
 /**
  * Class IndexOpenStreetMapEntityMessage
