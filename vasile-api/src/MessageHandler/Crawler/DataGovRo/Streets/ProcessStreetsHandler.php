@@ -2,14 +2,13 @@
 
 namespace App\MessageHandler\Crawler\DataGovRo\Streets;
 
-use App\Model\Administrative\Unit;
+use App\Helpers\LanguageHelpers;
 use App\Entity\OpenData\Source;
 use App\Message\DataGovRo\Streets\ProcessStreets;
 use App\MessageHandler\AbstractMessageHandler;
 use App\MessageHandler\Crawler\DataGovRo\FileSystemAwareTrait;
-use App\ModelCompositeBuilder\Administrative\AdministrativeUnitBuilder;
-use App\ModelCompositeBuilder\Administrative\WayBuilder;
 use App\Repository\Administrative\UnitRepository;
+use App\Repository\Administrative\WayRepository;
 
 /**
  * Class ProcessStreetsHandler
@@ -29,33 +28,38 @@ class ProcessStreetsHandler extends AbstractMessageHandler
      */
     private $administrativeUnitRepository;
 
-//    /**
-//     * @var WayRepository
-//     */
-//    private $wayRepository;
+    /**
+     * @var WayRepository
+     */
+    private $wayRepository;
 
     /**
      * ProcessStreetsHandler constructor.
      * @param UnitRepository $administrativeUnitRepository
-     * //     * @param WayRepository $wayRepository
+     * @param WayRepository  $wayRepository
      * @param \Redis         $cache
      */
     public function __construct(
         UnitRepository $administrativeUnitRepository,
-//        WayRepository $wayRepository,
+        WayRepository $wayRepository,
         \Redis $cache
     ) {
         parent::__construct();
-//        $this->wayRepository                = $wayRepository;
         $this->administrativeUnitRepository = $administrativeUnitRepository;
+        $this->wayRepository                = $wayRepository;
         $this->cache                        = $cache;
     }
 
+    /**
+     * @param ProcessStreets $message
+     * @throws \Exception
+     */
     public function __invoke(ProcessStreets $message)
     {
+        $this->clearCache();
         $this->log("Processing streets pack {$message->getSource()->getTitle()}");
         $this->updateLocalities($message->getSource());
-//        $this->loadStreets($message->getSource());
+        $this->loadStreets($message->getSource());
     }
 
     private function loadStreets(Source $source)
@@ -71,18 +75,12 @@ class ProcessStreetsHandler extends AbstractMessageHandler
 
         /** @var \SimpleXMLElement $streetData */
         foreach ($streetsData->rand as $streetData) {
-            /** @var AdministrativeUnit $administrativeUnit */
-            $administrativeUnit = $this->administrativeUnitRepository->find(
-                $this->getAdministrativeUnitId((int) $streetData->LOC_COD)
-            );
-            if (is_null($administrativeUnit)) {
-                $this->log("Could not find admin unit for " . json_encode($streetData));
-                continue;
-            }
-            $way = WayBuilder::fromStreetsIndex($streetData);
-            $this->wayRepository->createOrUpdate($way, $administrativeUnit);
+            $administrativeUnit = $this->getAdministrativeUnitId((int) $streetData->LOC_COD);
 
-            $this->graphEntityManager->clear();
+            if (is_null($this->wayRepository->createFromStreets(get_object_vars($streetData), $administrativeUnit))) {
+                $this->output->write(PHP_EOL);
+                $this->log('Could not add way <question>[ ' . json_encode($streetData) . '</question> ]');
+            }
             $this->progressBar->advance();
         }
         $this->finishProgressBar();
@@ -108,11 +106,13 @@ class ProcessStreetsHandler extends AbstractMessageHandler
         foreach ($localitiesData->rand as $localityData) {
             if ($unit = $this->administrativeUnitRepository->updateFromStreetData(get_object_vars($localityData))) {
                 $this->cacheLocalityId((int) $localityData->COD, $unit->getId());
-                $this->progressBar->advance();
             } else {
                 $this->output->write(PHP_EOL);
-                $this->log("Could not find " . json_encode($localityData));
+                $name = LanguageHelpers::asciiTranslit($localityData->DENUMIRE);
+                $this->output->write(PHP_EOL);
+                $this->log("Could not find <question>[ $name - Siruta: {$localityData->COD_SIRUTA}, Postal: {$localityData->COD_POSTAL}, Primarie: {$localityData->ARE_PRIMARIE}, CUI: {$localityData->COD_FISCAL_PRIMARIE} ]</question>");
             }
+            $this->progressBar->advance();
         }
         $this->finishProgressBar();
     }
@@ -128,10 +128,19 @@ class ProcessStreetsHandler extends AbstractMessageHandler
 
     /**
      * @param int $localityId
-     * @return int
+     * @return int|null
      */
-    private function getAdministrativeUnitId(int $localityId): int
+    private function getAdministrativeUnitId(int $localityId): ?int
     {
-        return $this->cache->get(implode(',', ['streets', 'locality_id', $localityId]));
+        $entry = $this->cache->get(implode(',', ['streets', 'locality_id', $localityId]));
+        if ($entry === false) {
+            return null;
+        }
+        return $entry;
+    }
+
+    private function clearCache()
+    {
+        $this->cache->del($this->cache->keys('streets.locality_id.*'));
     }
 }

@@ -99,7 +99,11 @@ abstract class AbstractMessageHandler implements MessageHandlerInterface
     protected function createProgressBar(int $total)
     {
         $this->progressBar = new ProgressBar($this->output, $total);
-        $this->progressBar->setFormat(' %current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s% %memory:6s%');
+        $className         = str_replace('App\MessageHandler\Crawler\\', '', get_called_class());
+        $this->progressBar->setFormat("[<info>{$className}</info>] %current%/%max% %bar% %percent:3s%% %elapsed:6s%/%estimated:-6s% %memory:6s%");
+        $this->progressBar->setEmptyBarCharacter(' ');
+        $this->progressBar->setBarCharacter('#');
+        $this->progressBar->setProgressCharacter('#');
     }
 
     protected function finishProgressBar()

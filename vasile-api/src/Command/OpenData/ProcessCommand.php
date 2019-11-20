@@ -61,7 +61,11 @@ class ProcessCommand extends AbstractCommand
     {
         $criteria = ['downloadable' => false];
         if ($input->getArgument('type')) {
-            $criteria['type'] = $input->getArgument('type');
+            if (strpos($input->getArgument('type'), 'http://') !== false) {
+                $criteria['url'] = $input->getArgument('type');
+            } else {
+                $criteria['type'] = $input->getArgument('type');
+            }
         }
 
         /** @var Source[] $sources */

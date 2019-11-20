@@ -133,7 +133,7 @@ EOL
 
         $result = $this->neo4jClient->run(
             <<<EOL
-            match (u:Administrative) where u.siruta = {siruta} or {postalCode} in u.postalCodes
+            match (u:Administrative) where u.siruta = {siruta} or {postalCode} in u.postalCodes or u.postalCode = {postalCode}
             set u += {unit}
             return id(u) as id
 EOL
@@ -150,5 +150,14 @@ EOL
         } catch (\Exception $exception) {
             return null;
         }
+    }
+
+    /**
+     * @param int $id
+     * @return Unit|null
+     */
+    public function find(int $id): ?Unit
+    {
+        return $this->graphEntityManager->getRepository(Unit::class)->find($id);
     }
 }
