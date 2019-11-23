@@ -10,7 +10,7 @@ RUN apt -y install \
     php7.3-dom \
     php7.3-xml \
     php7.3-phar \
-    php7.3-xdebug \
+#    php7.3-xdebug \
     php7.3-zip \
     php7.3-curl \
     php7.3-iconv \
@@ -37,8 +37,8 @@ RUN cd /opt/geos && \
 
 COPY symfony.ini /etc/php/7.3/fpm/conf.d/
 COPY symfony.ini /etc/php/7.3/cli/conf.d/
-COPY xdebug.ini  /etc/php/7.3/fpm/conf.d/20-xdebug.ini
-COPY xdebug.ini  /etc/php/7.3/cli/conf.d/20-xdebug.ini
+#COPY xdebug.ini  /etc/php/7.3/fpm/conf.d/20-xdebug.ini
+#COPY xdebug.ini  /etc/php/7.3/cli/conf.d/20-xdebug.ini
 COPY geos.ini  /etc/php/7.3/fpm/conf.d/20-geos.ini
 COPY geos.ini  /etc/php/7.3/cli/conf.d/20-geos.ini
 

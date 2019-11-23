@@ -37,7 +37,7 @@ class UnitRepository extends AbstractRepository
                 case 'CODP':
                     $postalCode = str_replace(',00', '', $value);
                     if ($value != '0') {
-                        $unit->addPostalCode($postalCode);
+                        $unit->setPostalCode($postalCode);
                     }
                     break;
                 case 'SIRSUP':
@@ -108,7 +108,7 @@ EOL
                     break;
                 case 'COD_POSTAL':
                     if (intval($value) > 0) {
-                        $unit->addPostalCode($value);
+                        $unit->setPostalCode($value);
                     }
                     break;
                 case 'COD_SIRUTA':
@@ -133,14 +133,14 @@ EOL
 
         $result = $this->neo4jClient->run(
             <<<EOL
-            match (u:Administrative) where u.siruta = {siruta} or {postalCode} in u.postalCodes or u.postalCode = {postalCode}
+            match (u:Administrative) where u.siruta = {siruta} or  u.postalCode = {postalCode}
             set u += {unit}
             return id(u) as id
 EOL
             ,
             [
                 'siruta'     => $unit->getSiruta(),
-                'postalCode' => $unit->getPostalCodes()[0],
+                'postalCode' => $unit->getPostalCode(),
                 'unit'       => $this->serializer->toArray($unit)
             ]
         );

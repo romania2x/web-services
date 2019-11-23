@@ -31,9 +31,9 @@ class Way
      */
     protected $countyId;
     /**
-     * @var array
+     * @var string
      */
-    protected $postalCodes;
+    protected $postalCode;
 
     /**
      * @return int
@@ -126,40 +126,20 @@ class Way
     }
 
     /**
-     * @return array
+     * @return string
      */
-    public function getPostalCodes(): ?array
+    public function getPostalCode(): string
     {
-        return $this->postalCodes;
-    }
-
-    /**
-     * @param array|null $postalCodes
-     * @return $this
-     */
-    public function setPostalCodes(?array $postalCodes): self
-    {
-        if ($postalCodes) {
-            $this->postalCodes = array_values($postalCodes);
-        }
-        return $this;
+        return $this->postalCode;
     }
 
     /**
      * @param string $postalCode
-     * @return $this
+     * @return Way
      */
-    public function addPostalCode(string $postalCode): self
+    public function setPostalCode(string $postalCode): Way
     {
-        if (intval($postalCode) == 0) {
-            return $this;
-        }
-        if (is_null($this->postalCodes)) {
-            $this->postalCodes = [];
-        }
-        if (!in_array($postalCode, $this->postalCodes)) {
-            $this->postalCodes[] = $postalCode;
-        }
+        $this->postalCode = $postalCode;
         return $this;
     }
 }

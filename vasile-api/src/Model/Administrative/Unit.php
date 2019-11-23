@@ -31,9 +31,9 @@ class Unit
      */
     protected $siruta;
     /**
-     * @var array
+     * @var string
      */
-    protected $postalCodes;
+    protected $postalCode;
     /**
      * @var int|null
      */
@@ -148,40 +148,20 @@ class Unit
     }
 
     /**
-     * @return array
+     * @return string
      */
-    public function getPostalCodes(): ?array
+    public function getPostalCode(): string
     {
-        return $this->postalCodes;
-    }
-
-    /**
-     * @param array $postalCodes
-     * @return Unit
-     */
-    public function setPostalCodes(?array $postalCodes): Unit
-    {
-        if ($postalCodes) {
-            $this->postalCodes = array_values($postalCodes);
-        }
-        return $this;
+        return $this->postalCode;
     }
 
     /**
      * @param string $postalCode
      * @return Unit
      */
-    public function addPostalCode(string $postalCode): Unit
+    public function setPostalCode(string $postalCode): Unit
     {
-        if (intval($postalCode) == 0) {
-            return $this;
-        }
-        if (is_null($this->postalCodes)) {
-            $this->postalCodes = [];
-        }
-        if (!in_array($postalCode, $this->postalCodes)) {
-            $this->postalCodes[] = $postalCode;
-        }
+        $this->postalCode = $postalCode;
         return $this;
     }
 }
