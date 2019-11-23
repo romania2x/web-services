@@ -80,10 +80,40 @@ services:
       - ['setProjectDir',['%kernel.project_dir%']]
       - ['setMessageBus',['@message_bus']]
       - ['setGraphEntityManager',['@neo4j.entity_manager.default']]
+
   App\MessageHandler\Crawler\DataGovRo\Streets\ProcessStreetsHandler:
     arguments:
       $cache: '@cache'
+    calls:
+      - ['setProjectDir',['%kernel.project_dir%']]
+      - ['setMessageBus',['@message_bus']]
+      - ['setGraphEntityManager',['@neo4j.entity_manager.default']]
+      - ['setSerializer',['@jms_serializer.serializer']]
+
+  App\MessageHandler\Crawler\DataGovRo\Streets\UpdateAdministrativeUnitsHandler:
+    arguments:
+      $cache: '@cache'
+      $unitRepository: '@App\Repository\Administrative\UnitRepository'
+    calls:
+      - ['setProjectDir',['%kernel.project_dir%']]
+      - ['setMessageBus',['@message_bus']]
+      - ['setGraphEntityManager',['@neo4j.entity_manager.default']]
+      - ['setSerializer',['@jms_serializer.serializer']]
+
+  App\MessageHandler\Crawler\DataGovRo\Streets\LoadStreetsHandler:
+    arguments:
+      $cache: '@cache'
       $wayRepository: '@App\Repository\Administrative\WayRepository'
+    calls:
+      - ['setProjectDir',['%kernel.project_dir%']]
+      - ['setMessageBus',['@message_bus']]
+      - ['setGraphEntityManager',['@neo4j.entity_manager.default']]
+      - ['setSerializer',['@jms_serializer.serializer']]
+
+  App\MessageHandler\Crawler\DataGovRo\Streets\LoadStreetsNumbersHandler:
+    arguments:
+      $cache: '@cache'
+      $wayNumberRepository: '@App\Repository\Administrative\WayNumberRepository'
     calls:
       - ['setProjectDir',['%kernel.project_dir%']]
       - ['setMessageBus',['@message_bus']]
@@ -127,6 +157,10 @@ services:
       $serializer: '@jms_serializer.serializer'
 
   App\Repository\Administrative\WayRepository:
+    arguments:
+      $serializer: '@jms_serializer.serializer'
+
+  App\Repository\Administrative\WayNumberRepository:
     arguments:
       $serializer: '@jms_serializer.serializer'
 

@@ -5,6 +5,18 @@
     "clue/stream-filter": {
         "version": "v1.4.1"
     },
+    "creof/doctrine2-spatial": {
+        "version": "dev-master"
+    },
+    "creof/geo-parser": {
+        "version": "2.2.1"
+    },
+    "creof/wkb-parser": {
+        "version": "v2.3.0"
+    },
+    "creof/wkt-parser": {
+        "version": "2.2.0"
+    },
     "danielmewes/php-rql": {
         "version": "dev-master"
     },
@@ -137,6 +149,9 @@
     "egulias/email-validator": {
         "version": "2.1.10"
     },
+    "elasticsearch/elasticsearch": {
+        "version": "dev-master"
+    },
     "facebook/webdriver": {
         "version": "1.7.1"
     },
@@ -175,6 +190,12 @@
     },
     "guzzlehttp/psr7": {
         "version": "1.x-dev"
+    },
+    "guzzlehttp/ringphp": {
+        "version": "1.1-dev"
+    },
+    "guzzlehttp/streams": {
+        "version": "3.0-dev"
     },
     "hoa/compiler": {
         "version": "3.x-dev"
@@ -322,6 +343,9 @@
     },
     "ralouphie/getallheaders": {
         "version": "3.0.3"
+    },
+    "react/promise": {
+        "version": "2.x-dev"
     },
     "sensio/framework-extra-bundle": {
         "version": "5.2",

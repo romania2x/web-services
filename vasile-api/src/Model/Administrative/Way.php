@@ -26,7 +26,6 @@ class Way
      * @var string
      */
     protected $slug;
-
     /**
      * @var int
      */

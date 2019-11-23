@@ -1,0 +1,45 @@
+<?php
+
+namespace App\Repository\Administrative;
+
+use App\Model\Administrative\WayNumber;
+use App\Repository\AbstractRepository;
+
+class WayNumberRepository extends AbstractRepository
+{
+    /**
+     * @param array $row
+     * @param int $parentUnitId
+     */
+    public function createFromStreets(array $row, int $parentUnitId)
+    {
+        $start = intval($row['NUMAR_START']);
+        $end = intval($row['NUMAR_SFARSIT']);
+
+        if ($start == 0 || $end == 0) {
+            dd($row);
+        }
+
+        for ($counter = $start; $counter <= $end; $counter += 2) {
+            $result = $this->neo4jClient->run(
+                $query = <<<EOT
+                match (pu:Administrative)-[:PARENT]->(w:Way{countyId:{wayCountyId}}) where id(pu) = {parentUnitId}
+                merge (wn:WayNumber:Administrative{number:{wayNo}})<-[:PARENT]-(w)
+                on create set wn = {wayNumber}
+                on match set wn += {wayNumber}
+                return id(wn) as id
+EOT
+                ,
+                [
+                    'parentUnitId' => $parentUnitId,
+                    'wayCountyId' => intval($row['COD']),
+                    'wayNo' => $counter,
+                    'wayNumber' => [
+                        'number' => $counter,
+                        'postalCode' => $row['COD_POSTAL']
+                    ]
+                ]
+            );
+        }
+    }
+}
