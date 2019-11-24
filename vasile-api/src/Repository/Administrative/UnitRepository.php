@@ -36,9 +36,7 @@ class UnitRepository extends AbstractRepository
                     break;
                 case 'CODP':
                     $postalCode = str_replace(',00', '', $value);
-                    if ($value != '0') {
-                        $unit->setPostalCode($postalCode);
-                    }
+                    $unit->setPostalCode($postalCode);
                     break;
                 case 'SIRSUP':
                 case 'JUD':
@@ -67,7 +65,7 @@ EOL
                 ,
                 [
                     'countyNationalId' => intval($row['JUD']),
-                    'siruta'           => $unit->getSiruta()
+                    'siruta' => $unit->getSiruta()
                 ]
             );
         } else {
@@ -83,8 +81,8 @@ EOL
                 ,
                 [
                     'parentSiruta' => intval($row['SIRSUP']),
-                    'siruta'       => $unit->getSiruta(),
-                    'unit'         => $this->serializer->toArray($unit)
+                    'siruta' => $unit->getSiruta(),
+                    'unit' => $this->serializer->toArray($unit)
                 ]
             );
         }
@@ -107,9 +105,7 @@ EOL
                     $unit->setTitle(mb_strtolower($value));
                     break;
                 case 'COD_POSTAL':
-                    if (intval($value) > 0) {
-                        $unit->setPostalCode($value);
-                    }
+                    $unit->setPostalCode($value);
                     break;
                 case 'COD_SIRUTA':
                     $unit->setSiruta(intval($value));
@@ -139,9 +135,9 @@ EOL
 EOL
             ,
             [
-                'siruta'     => $unit->getSiruta(),
+                'siruta' => $unit->getSiruta(),
                 'postalCode' => $unit->getPostalCode(),
-                'unit'       => $this->serializer->toArray($unit)
+                'unit' => $this->serializer->toArray($unit)
             ]
         );
         try {

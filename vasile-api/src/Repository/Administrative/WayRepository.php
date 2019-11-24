@@ -13,7 +13,7 @@ class WayRepository extends AbstractRepository
 {
     /**
      * @param array $row
-     * @param int   $parentUnit
+     * @param int $parentUnit
      * @return Way|null
      */
     public function createFromStreets(array $row, int $parentUnit): ?Way
@@ -34,7 +34,9 @@ class WayRepository extends AbstractRepository
                     break;
                 case 'COD_POSTAL':
                     if (is_string($value)) {
-                        $way->addPostalCode($value);
+                        $way->setPostalCode($value);
+                    } else {
+                        $way->setPostalCode('0');
                     }
                     break;
                 case 'LOC_JUD_COD':
@@ -63,8 +65,8 @@ EOL
                 ,
                 [
                     'parentUnitId' => $parentUnit,
-                    'wayCountyId'  => $way->getCountyId(),
-                    'way'          => $this->serializer->toArray($way)
+                    'wayCountyId' => $way->getCountyId(),
+                    'way' => $this->serializer->toArray($way)
                 ]
             );
 

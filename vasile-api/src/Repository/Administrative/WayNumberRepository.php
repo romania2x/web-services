@@ -16,6 +16,14 @@ class WayNumberRepository extends AbstractRepository
         $start = intval($row['NUMAR_START']);
         $end = intval($row['NUMAR_SFARSIT']);
 
+        if ($end > 500) {
+            $end = 500;
+        }
+
+        if ($end == 0 && $start > 0) {
+            $end = $start;
+        }
+
         if ($start == 0 || $end == 0) {
             dd($row);
         }
