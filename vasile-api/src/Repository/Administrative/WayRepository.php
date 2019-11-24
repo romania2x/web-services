@@ -12,15 +12,15 @@ use App\Repository\AbstractRepository;
 class WayRepository extends AbstractRepository
 {
     /**
-     * @param array $row
-     * @param int $parentUnit
+     * @param \SimpleXMLElement $row
      * @return Way|null
      */
-    public function createFromStreets(array $row, int $parentUnit): ?Way
+    public function createFromStreets(\SimpleXMLElement $row): ?Way
     {
         $way = new Way();
 
         foreach ($row as $key => $value) {
+            $value = (string) $value;
             switch ($key) {
                 case 'DENUMIRE':
                     $way->setName(LanguageHelpers::normalizeName($value));
@@ -39,8 +39,10 @@ class WayRepository extends AbstractRepository
                         $way->setPostalCode('0');
                     }
                     break;
-                case 'LOC_JUD_COD':
                 case 'LOC_COD':
+                    $parentUnit = $value;
+                    break;
+                case 'LOC_JUD_COD':
                 case 'COD_POLITIE':
                 case 'SAR_COD':
                 case 'NR_SECTOR':
@@ -56,7 +58,7 @@ class WayRepository extends AbstractRepository
         trY {
             $result = $this->neo4jClient->run(
                 <<<EOL
-            match (pu:Administrative) where id(pu) = {parentUnitId}
+            match (pu:Administrative{structuralId:{parentUnit})
             merge (w:Way:Administrative{countyId:{wayCountyId}})<-[:PARENT]-(pu)
             on create set w = {way}
             on match set w += {way}
@@ -64,9 +66,9 @@ class WayRepository extends AbstractRepository
 EOL
                 ,
                 [
-                    'parentUnitId' => $parentUnit,
+                    'parentUnit'  => $parentUnit,
                     'wayCountyId' => $way->getCountyId(),
-                    'way' => $this->serializer->toArray($way)
+                    'way'         => $this->serializer->toArray($way)
                 ]
             );
 

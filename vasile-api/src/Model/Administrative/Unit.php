@@ -8,90 +8,50 @@ namespace App\Model\Administrative;
  * Class AdministrativeUnit
  * @package App\Model\Administrative
  */
-class Unit
+class Unit extends Administrative
 {
-    /**
-     * @var int
-     */
-    public $id;
-    /**
-     * @var string
-     */
-    protected $name;
     /**
      * @var string|null
      */
     protected $title;
     /**
+     * @var string|null
+     */
+    protected $type;
+    /**
      * @var string
      */
-    protected $slug;
+    protected $environment;
+
+    /**
+     * @var string
+     */
+    protected $rank;
+
+    /**
+     * @var bool
+     */
+    protected $fictive;
+
+    /**
+     * @var bool
+     */
+    protected $townHall;
+
+    /**
+     * @var string
+     */
+    protected $townHallFiscalCode;
+
     /**
      * @var int
      */
-    protected $siruta;
-    /**
-     * @var string
-     */
-    protected $postalCode;
-    /**
-     * @var int|null
-     */
-    protected $type;
+    protected $structuralId;
 
     /**
-     * @return int
+     * @var int
      */
-    public function getId(): int
-    {
-        return $this->id;
-    }
-
-    /**
-     * @param int $id
-     * @return Unit
-     */
-    public function setId(int $id): Unit
-    {
-        $this->id = $id;
-        return $this;
-    }
-
-    /**
-     * @return int|null
-     */
-    public function getType(): ?int
-    {
-        return $this->type;
-    }
-
-    /**
-     * @param int|null $type
-     * @return Unit
-     */
-    public function setType(?int $type): Unit
-    {
-        $this->type = $type;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    /**
-     * @param string $name
-     * @return Unit
-     */
-    public function setName(string $name): Unit
-    {
-        $this->name = $name;
-        return $this;
-    }
+    protected $policeId;
 
     /**
      * @return string|null
@@ -112,56 +72,146 @@ class Unit
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getSlug(): string
+    public function getType(): ?string
     {
-        return $this->slug;
+        return $this->type;
     }
 
     /**
-     * @param string $slug
+     * @param string|null $type
      * @return Unit
      */
-    public function setSlug(string $slug): Unit
+    public function setType(?string $type): Unit
     {
-        $this->slug = $slug;
+        $this->type = $type;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEnvironment(): string
+    {
+        return $this->environment;
+    }
+
+    /**
+     * @param string $environment
+     * @return Unit
+     */
+    public function setEnvironment(string $environment): Unit
+    {
+        $this->environment = $environment;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFictive(): bool
+    {
+        return $this->fictive;
+    }
+
+    /**
+     * @param bool $fictive
+     * @return Unit
+     */
+    public function setFictive(bool $fictive): Unit
+    {
+        $this->fictive = $fictive;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRank(): string
+    {
+        return $this->rank;
+    }
+
+    /**
+     * @param string $rank
+     * @return Unit
+     */
+    public function setRank(string $rank): Unit
+    {
+        $this->rank = $rank;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasTownHall(): bool
+    {
+        return $this->townHall;
+    }
+
+    /**
+     * @param bool $townHall
+     * @return Unit
+     */
+    public function setTownHall(bool $townHall): Unit
+    {
+        $this->townHall = $townHall;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTownHallFiscalCode(): string
+    {
+        return $this->townHallFiscalCode;
+    }
+
+    /**
+     * @param string $townHallFiscalCode
+     * @return Unit
+     */
+    public function setTownHallFiscalCode(string $townHallFiscalCode): Unit
+    {
+        $this->townHallFiscalCode = $townHallFiscalCode;
         return $this;
     }
 
     /**
      * @return int
      */
-    public function getSiruta(): int
+    public function getStructuralId(): int
     {
-        return $this->siruta;
+        return $this->structuralId;
     }
 
     /**
-     * @param int $siruta
+     * @param int $structuralId
      * @return Unit
      */
-    public function setSiruta(int $siruta): Unit
+    public function setStructuralId(int $structuralId): Unit
     {
-        $this->siruta = $siruta;
+        $this->structuralId = $structuralId;
         return $this;
     }
 
     /**
-     * @return string
+     * @return int
      */
-    public function getPostalCode(): string
+    public function getPoliceId(): int
     {
-        return $this->postalCode;
+        return $this->policeId;
     }
 
     /**
-     * @param string $postalCode
+     * @param int $policeId
      * @return Unit
      */
-    public function setPostalCode(string $postalCode): Unit
+    public function setPoliceId(int $policeId): Unit
     {
-        $this->postalCode = $postalCode;
+        $this->policeId = $policeId;
         return $this;
     }
 }

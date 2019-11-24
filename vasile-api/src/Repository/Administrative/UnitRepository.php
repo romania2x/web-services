@@ -4,10 +4,12 @@ declare(strict_types = 1);
 
 namespace App\Repository\Administrative;
 
+use App\Constants\Administrative\UnitEnvironment;
 use App\Constants\Administrative\UnitType;
 use App\Helpers\LanguageHelpers;
 use App\Model\Administrative\Unit;
 use App\Repository\AbstractRepository;
+use Symfony\Component\VarDumper\VarDumper;
 
 /**
  * Class UnitRepository
@@ -23,32 +25,47 @@ class UnitRepository extends AbstractRepository
     {
         $unit = new Unit();
         foreach ($row as $key => $value) {
+            $value = trim($value);
             switch ($key) {
                 case 'DENLOC':
                     $unit->setName(LanguageHelpers::normalizeName($value));
                     $unit->setSlug(LanguageHelpers::slugify($value));
                     break;
                 case 'TIP':
-                    $unit->setType(intval($value));
+                    $unit->setType(UnitType::toString($value));
                     break;
                 case 'SIRUTA':
                     $unit->setSiruta(intval($value));
                     break;
                 case 'CODP':
                     $postalCode = str_replace(',00', '', $value);
-                    $unit->setPostalCode($postalCode);
+                    if ($postalCode != '0') {
+                        $unit->setPostalCode($postalCode);
+                    }
                     break;
+                case 'MED':
+                    $unit->setEnvironment(UnitEnvironment::toString($value));
+                    break;
+                case 'fictiv':
+                    if ($value != '') {
+                        $unit->setFictive(intval($value) > 0);
+                    }
+                    break;
+                case 'rang':
+                    if ($value != '') {
+                        $unit->setRank($value);
+                    }
+                    break;
+                case 'NIV':
+                    #depth in structure, we have a graph for that
                 case 'SIRSUP':
                 case 'JUD':
-                case 'NIV':
-                case 'MED':
                 case 'REGIUNE':
+                    #relational data
                 case 'FSJ':
                 case 'FS2':
                 case 'FS3':
                 case 'FSL':
-                case 'rang':
-                case 'fictiv':
                     //noop
                     break;
                 default:
@@ -56,20 +73,22 @@ class UnitRepository extends AbstractRepository
             }
         }
 
-        if (UnitType::COUNTY == $unit->getType()) {
-            $this->neo4jClient->run(
+        if (UnitType::toString(UnitType::COUNTY) == $unit->getType()) {
+            $result = $this->neo4jClient->run(
                 <<<EOL
                 match (c:County:Administrative{nationalId:{countyNationalId}})
-                set c.siruta = {siruta} 
+                set c.siruta = {siruta}
+                return id(c) as id 
 EOL
                 ,
                 [
                     'countyNationalId' => intval($row['JUD']),
-                    'siruta' => $unit->getSiruta()
+                    'siruta'           => $unit->getSiruta()
                 ]
             );
+            $result->firstRecord();
         } else {
-            $this->neo4jClient->run(
+            $result = $this->neo4jClient->run(
                 <<<EOL
                 match (pu:Administrative{siruta:{parentSiruta}})
                 merge (u:Unit:Administrative{siruta:{siruta}})
@@ -81,21 +100,23 @@ EOL
                 ,
                 [
                     'parentSiruta' => intval($row['SIRSUP']),
-                    'siruta' => $unit->getSiruta(),
-                    'unit' => $this->serializer->toArray($unit)
+                    'siruta'       => $unit->getSiruta(),
+                    'unit'         => $this->serializer->toArray($unit)
                 ]
             );
+            $result->firstRecord();
         }
     }
 
     /**
-     * @param array $row
+     * @param \SimpleXMLElement $row
      * @return Unit|null
      */
-    public function updateFromStreetData(array $row): ?Unit
+    public function updateFromStreetData(\SimpleXMLElement $row): ?Unit
     {
         $unit = new Unit();
         foreach ($row as $key => $value) {
+            $value = (string) $value;
             switch ($key) {
                 case 'DENUMIRE':
                     $unit->setName(LanguageHelpers::normalizeName($value));
@@ -105,19 +126,29 @@ EOL
                     $unit->setTitle(mb_strtolower($value));
                     break;
                 case 'COD_POSTAL':
-                    $unit->setPostalCode($value);
+                    if ($value != '0') {
+                        $unit->setPostalCode($value);
+                    }
                     break;
                 case 'COD_SIRUTA':
                     $unit->setSiruta(intval($value));
                     break;
-                case 'JUD_COD':
+                case 'ARE_PRIMARIE':
+                    $unit->setTownHall($value == 'A');
+                    break;
+                case 'COD_FISCAL_PRIMARIE':
+                    $unit->setTownHallFiscalCode($value);
+                    break;
                 case 'COD':
+                    $unit->setStructuralId(intval($value));
+                    break;
                 case 'Cod_POLITIE':
+                    $unit->setPoliceId(intval($value));
+                    break;
+                case 'JUD_COD':
                 case 'SAR_COD':
                 case 'LOC_JUD_COD':
                 case 'LOC_COD':
-                case 'ARE_PRIMARIE':
-                case 'COD_FISCAL_PRIMARIE':
                 case 'COD_POLITIE_TATA':
                 case 'SAR_COD_MF':
                 case 'COD_SIRUTA_TATA':
@@ -127,17 +158,18 @@ EOL
             }
         }
 
+
         $result = $this->neo4jClient->run(
             <<<EOL
-            match (u:Administrative) where u.siruta = {siruta} or  u.postalCode = {postalCode}
+            match (u:Administrative) where u.siruta = {siruta} or u.postalCode = {postalCode}
             set u += {unit}
             return id(u) as id
 EOL
             ,
             [
-                'siruta' => $unit->getSiruta(),
+                'siruta'     => $unit->getSiruta(),
                 'postalCode' => $unit->getPostalCode(),
-                'unit' => $this->serializer->toArray($unit)
+                'unit'       => $this->serializer->toArray($unit)
             ]
         );
         try {

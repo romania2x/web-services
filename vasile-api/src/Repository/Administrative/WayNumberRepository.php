@@ -8,13 +8,13 @@ use App\Repository\AbstractRepository;
 class WayNumberRepository extends AbstractRepository
 {
     /**
-     * @param array $row
-     * @param int $parentUnitId
+     * @param \SimpleXMLElement $row
+     * @param int               $parentUnitId
      */
-    public function createFromStreets(array $row, int $parentUnitId)
+    public function createFromStreets(\SimpleXMLElement $row, int $parentUnitId)
     {
-        $start = intval($row['NUMAR_START']);
-        $end = intval($row['NUMAR_SFARSIT']);
+        $start = intval($row->NUMAR_START);
+        $end   = intval($row->NUMAR_SFARSIT);
 
         if ($end > 500) {
             $end = 500;
@@ -29,7 +29,7 @@ class WayNumberRepository extends AbstractRepository
         }
 
         for ($counter = $start; $counter <= $end; $counter += 2) {
-            $result = $this->neo4jClient->run(
+            $this->neo4jClient->run(
                 $query = <<<EOT
                 match (pu:Administrative)-[:PARENT]->(w:Way{countyId:{wayCountyId}}) where id(pu) = {parentUnitId}
                 merge (wn:WayNumber:Administrative{number:{wayNo}})<-[:PARENT]-(w)
@@ -40,11 +40,11 @@ EOT
                 ,
                 [
                     'parentUnitId' => $parentUnitId,
-                    'wayCountyId' => intval($row['COD']),
-                    'wayNo' => $counter,
-                    'wayNumber' => [
-                        'number' => $counter,
-                        'postalCode' => $row['COD_POSTAL']
+                    'wayCountyId'  => intval($row->COD),
+                    'wayNo'        => $counter,
+                    'wayNumber'    => [
+                        'number'     => $counter,
+                        'postalCode' => $row->COD_POSTAL
                     ]
                 ]
             );

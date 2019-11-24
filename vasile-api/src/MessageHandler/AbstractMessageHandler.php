@@ -86,7 +86,7 @@ abstract class AbstractMessageHandler implements MessageHandlerInterface
      */
     protected function log(string $message, bool $rewind = false)
     {
-        $className = str_replace('App\MessageHandler\Crawler\\', '', get_called_class());
+        $className = str_replace('App\MessageHandler\Crawler\\', '', self::class);
         $message   = "[<info>{$className}</info>] $message";
 
         if ($rewind) {
@@ -99,7 +99,7 @@ abstract class AbstractMessageHandler implements MessageHandlerInterface
     protected function createProgressBar(int $total)
     {
         $this->progressBar = new ProgressBar($this->output, $total);
-        $className         = str_replace('App\MessageHandler\Crawler\\', '', get_called_class());
+        $className         = str_replace('App\MessageHandler\Crawler\\', '', self::class);
         $this->progressBar->setFormat("[<info>{$className}</info>] %current%/%max% %bar% %percent:3s%% %elapsed:6s%/%estimated:-6s% %memory:6s%");
         $this->progressBar->setEmptyBarCharacter(' ');
         $this->progressBar->setBarCharacter('#');
@@ -110,5 +110,11 @@ abstract class AbstractMessageHandler implements MessageHandlerInterface
     {
         $this->progressBar->finish();
         $this->output->write(PHP_EOL);
+    }
+
+    protected function cleanMemory()
+    {
+        $this->graphEntityManager->clear();
+        gc_collect_cycles();
     }
 }

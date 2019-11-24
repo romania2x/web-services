@@ -2,11 +2,13 @@
 
 namespace App\Constants\Administrative;
 
+use App\Constants\AbstractEnum;
+
 /**
  * Class UnitType
  * @package App\Constants\Administrative
  */
-abstract class UnitType
+abstract class UnitType extends AbstractEnum
 {
     const COUNTY = 40;
     const MUNICIPALITY_WITH_COUNTY_SEAT = 1;

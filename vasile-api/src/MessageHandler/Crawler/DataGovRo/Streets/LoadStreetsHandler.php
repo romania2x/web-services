@@ -44,19 +44,15 @@ class LoadStreetsHandler extends AbstractMessageHandler
 
         /** @var \SimpleXMLElement $streetData */
         foreach ($streetsData->rand as $streetData) {
-            $administrativeUnit = $this->getAdministrativeUnitId((int) $streetData->LOC_COD);
-
-            if (is_null($administrativeUnit)) {
-                //todo: log invalid entries
-                continue;
-            }
-
-            if (is_null($this->wayRepository->createFromStreets(get_object_vars($streetData), $administrativeUnit))) {
+            if (is_null($this->wayRepository->createFromStreets($streetData))) {
                 $this->output->write(PHP_EOL);
                 $this->log('Could not add way <question>[ ' . json_encode($streetData) . '</question> ]');
             }
             $this->progressBar->advance();
+            $this->cleanMemory();
         }
+
+        $this->graphEntityManager->clear();
         $this->finishProgressBar();
     }
 

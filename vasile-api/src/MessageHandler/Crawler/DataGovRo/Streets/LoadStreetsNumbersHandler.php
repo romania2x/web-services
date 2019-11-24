@@ -26,12 +26,12 @@ class LoadStreetsNumbersHandler extends AbstractMessageHandler
     private $cache;
 
     /**
-     * @param \Redis $cache
+     * @param \Redis              $cache
      * @param WayNumberRepository $wayNumberRepository
      */
     public function __construct(\Redis $cache, WayNumberRepository $wayNumberRepository)
     {
-        $this->cache = $cache;
+        $this->cache               = $cache;
         $this->wayNumberRepository = $wayNumberRepository;
         parent::__construct();
     }
@@ -54,10 +54,13 @@ class LoadStreetsNumbersHandler extends AbstractMessageHandler
                 $this->progressBar->advance();
                 continue;
             }
-            $this->wayNumberRepository->createFromStreets(get_object_vars($numberSet), $administrativeUnit);
+            $this->wayNumberRepository->createFromStreets($numberSet, $administrativeUnit);
             $this->progressBar->advance();
+            $this->cleanMemory();
         }
+
         $this->finishProgressBar();
+        $this->cleanMemory();
     }
 
 

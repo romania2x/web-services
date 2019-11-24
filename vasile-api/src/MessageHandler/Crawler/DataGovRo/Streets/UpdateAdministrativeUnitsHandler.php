@@ -46,8 +46,7 @@ class UpdateAdministrativeUnitsHandler extends AbstractMessageHandler
 
         /** @var \SimpleXMLElement $localityData */
         foreach ($localitiesData->rand as $localityData) {
-            if ($unit = $this->administrativeUnitRepository->updateFromStreetData(get_object_vars($localityData))) {
-                $this->cacheLocalityId((int) $localityData->COD, $unit->getId());
+            if ($unit = $this->administrativeUnitRepository->updateFromStreetData($localityData)) {
             } else {
                 $this->output->write(PHP_EOL);
                 $name = LanguageHelpers::asciiTranslit($localityData->DENUMIRE);
@@ -55,17 +54,9 @@ class UpdateAdministrativeUnitsHandler extends AbstractMessageHandler
                 $this->log("Could not find <question>[ $name - Siruta: {$localityData->COD_SIRUTA}, Postal: {$localityData->COD_POSTAL}, Primarie: {$localityData->ARE_PRIMARIE}, CUI: {$localityData->COD_FISCAL_PRIMARIE} ]</question>");
             }
             $this->progressBar->advance();
+            $this->cleanMemory();
         }
+
         $this->finishProgressBar();
-    }
-
-
-    /**
-     * @param int $localityId
-     * @param int $administrativeUnitId
-     */
-    private function cacheLocalityId(int $localityId, int $administrativeUnitId)
-    {
-        $this->cache->set(implode('.', ['streets', 'locality_id', $localityId]), $administrativeUnitId);
     }
 }

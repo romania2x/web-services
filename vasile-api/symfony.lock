@@ -17,9 +17,6 @@
     "creof/wkt-parser": {
         "version": "2.2.0"
     },
-    "danielmewes/php-rql": {
-        "version": "dev-master"
-    },
     "doctrine/annotations": {
         "version": "1.0",
         "recipe": {
@@ -323,6 +320,9 @@
     "phpdocumentor/type-resolver": {
         "version": "0.4.0"
     },
+    "phpseclib/phpseclib": {
+        "version": "2.0.x-dev"
+    },
     "proj4php/proj4php": {
         "version": "dev-master"
     },
@@ -331,6 +331,9 @@
     },
     "psr/container": {
         "version": "1.0.0"
+    },
+    "psr/event-dispatcher": {
+        "version": "1.0.x-dev"
     },
     "psr/http-message": {
         "version": "1.0.x-dev"
@@ -752,5 +755,8 @@
     },
     "zendframework/zend-code": {
         "version": "3.3.1"
+    },
+    "zendframework/zend-eventmanager": {
+        "version": "3.3-dev"
     }
 }
