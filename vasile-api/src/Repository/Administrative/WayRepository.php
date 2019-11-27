@@ -40,7 +40,7 @@ class WayRepository extends AbstractRepository
                     }
                     break;
                 case 'LOC_COD':
-                    $parentUnit = $value;
+                    $parentUnit = intval($value);
                     break;
                 case 'LOC_JUD_COD':
                 case 'COD_POLITIE':
@@ -58,7 +58,7 @@ class WayRepository extends AbstractRepository
         trY {
             $result = $this->neo4jClient->run(
                 <<<EOL
-            match (pu:Administrative{structuralId:{parentUnit})
+            match (pu:Unit{structuralId:{parentUnit})
             merge (w:Way:Administrative{countyId:{wayCountyId}})<-[:PARENT]-(pu)
             on create set w = {way}
             on match set w += {way}

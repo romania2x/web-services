@@ -157,8 +157,6 @@ EOL
                     throw new \RuntimeException("Unknown field $key with value $value");
             }
         }
-
-
         $result = $this->neo4jClient->run(
             <<<EOL
             match (u:Administrative) where u.siruta = {siruta} or u.postalCode = {postalCode}

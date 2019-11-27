@@ -24,13 +24,13 @@ class UpdateAdministrativeUnitsHandler extends AbstractMessageHandler
 
     /**
      * @param UnitRepository $unitRepository
-     * @param \Redis $cache
+     * @param \Redis         $cache
      */
     public function __construct(UnitRepository $unitRepository, \Redis $cache)
     {
         parent::__construct();
         $this->administrativeUnitRepository = $unitRepository;
-        $this->cache = $cache;
+        $this->cache                        = $cache;
     }
 
     /**
@@ -46,8 +46,7 @@ class UpdateAdministrativeUnitsHandler extends AbstractMessageHandler
 
         /** @var \SimpleXMLElement $localityData */
         foreach ($localitiesData->rand as $localityData) {
-            if ($unit = $this->administrativeUnitRepository->updateFromStreetData($localityData)) {
-            } else {
+            if (is_null($unit = $this->administrativeUnitRepository->updateFromStreetData($localityData))) {
                 $this->output->write(PHP_EOL);
                 $name = LanguageHelpers::asciiTranslit($localityData->DENUMIRE);
                 $this->output->write(PHP_EOL);
